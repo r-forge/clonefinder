@@ -62,7 +62,7 @@ align <- function(sequences, mysub = MYSUB, gapO = 10, gapE = 0.2) {
   
   cons <- msaConsensusSequence(aligned)
   rcons <- strsplit(msaConsensusSequence(aligned), "")
-  xcons <- xlate(rcons, backme, "")
+  xcons <- .xlate(rcons, backme, "")
 
   list(babel = babel,
        aligned = aligned,
@@ -116,10 +116,10 @@ computeConsensus <- function() {
 
 revert <- function(stuff) {
   A <- stuff$alignedOriginal
-  xcons <- xlate(strsplit(stuff$cons, ""), omega, "-")
+  xcons <- .xlate(strsplit(stuff$cons, ""), omega, "-")
   temp <- as.character(A)
   names(temp) <- names(A)
-  back <- xlate(strsplit(temp, ""), omega, "-")
+  back <- .xlate(strsplit(temp, ""), omega, "-")
   rack <- strsplit(back, "-")
   list(meet = as.matrix(as.data.frame( rack )), cons = xcons)
 }

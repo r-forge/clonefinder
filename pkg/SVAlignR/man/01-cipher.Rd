@@ -19,18 +19,21 @@ returns a new object of the \code{Cipher} class.
   along with forward and reverse transliteration rules.
 }
 \usage{
-Cipher(sampleText, split = "\\-", extras = c("-" = ":", "?" = "?")
+Cipher(sampleText, split = "-", extras = c("-" = ":", "?" = "?"))
 encode(cipher, text)
 decode(cipher, text)
 }
 \arguments{
   \item{sampleText}{A character vector that contains all symbols you
-        want to be able to transliterate. Duplicate symbols are
-        automatically removed.}
+    want to be able to transliterate. Duplicate symbols are
+    automatically removed.}
   \item{split}{A single character used to split words into
-        symbols. Defaults to a hyphen for our applications.}
+    symbols. Defaults to a hyphen for our applications.}
+  \item{extras}{Additional characters to be added for reverse
+    tranlsiteration, since they may appear as the results of
+    alignments in consensus sequences.}
   \item{cipher}{An object of the \code{Cipher} class.}
-  \item{text}{Acharacter vector of words to be transliterated.}
+  \item{text}{A character vector of words to be transliterated.}
 }
 \section{Slots}{
   \describe{
