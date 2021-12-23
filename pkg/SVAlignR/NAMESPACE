@@ -3,22 +3,28 @@
 ###
 
 import("methods")
+importMethodsFrom("oompaBase", "plot")
+#importFrom("gdata", "read.xls")
 
 importFrom("graphics", "image", "mtext", "text")
-importFrom("stats", "as.dendrogram", "as.dist")
+importFrom("stats", "hclust", "as.dendrogram", "as.dist", "cutree", "heatmap")
 importFrom("utils", "adist")
 
 ### Computational models
-importFrom("NameNeedle", "needleScores")
+importFrom("NameNeedle", "needleScores", "defaultNeedleParams")
 importFrom("msa", "msa")
-importFrom("gdata", "read.xls")
 
 ### graphing
 importFrom("dendextend", "set", "%>%")
-importMethodsFrom("ape", "as.phylo")
+importFrom("ape", "as.phylo")
 
 ### BLOSUM62
 
 ### Exports
 exportClass("Cipher")
 export("Cipher", "encode", "decode")
+
+### SequenceClusters
+exportClass("SequenceCluster")
+export("SequenceCluster")
+exportMethods("plot")
