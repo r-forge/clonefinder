@@ -7,10 +7,12 @@ setClass("SequenceCluster",
          slots = c(
            method = "character",
            distance = "dist",
-           hc = "hclust")
+           hc = "hclust",
+           NC = "numeric",
+           clusters = "numeric")
          )
 
-SequenceCluster <- function(encoded, method = c("needelman", "levenshtein")) {
+SequenceCluster <- function(encoded, method = c("needelman", "levenshtein"), NC = 5) {
   method <- match.arg(method)
 
   doNeedelman <- function(pseudo) {
@@ -41,11 +43,21 @@ SequenceCluster <- function(encoded, method = c("needelman", "levenshtein")) {
                  stop("Method |", method, "| does not match any known methods." )
                  )
   hc <- hclust(symm, "ward.D2")
+  clust <- cutree(hc, k = NC)
   new("SequenceCluster",
       method = method,
       distance = symm,
-      hc = hc)
+      hc = hc,
+      NC = NC,
+      clusters = clust)
 }
+
+updateClusters <- function(sc, NC) {
+  sc@NC <- NC
+  sc@clusters <- cutree(sc@hc, k = NC)
+  sc
+}
+
 
 myColorSet <- c("cornflowerblue", "hotpink2", "green4", "red",
                 "darkorchid1", "gray16", "darkgoldenrod", "mediumorchid4",
@@ -55,51 +67,52 @@ myColorSet <- c("cornflowerblue", "hotpink2", "green4", "red",
                 "orchid", "tan4", "midnightblue", "firebrick")
 
 setMethod("plot", signature("SequenceCluster", "missing"),
-function(x, NK = 5, type = "rooted", ...) {
-  plotRooted <- function(x, NK, ...) {
+function(x, type = "rooted", ...) {
+  plotRooted <- function(x, NC = x@NC, ...) {
 ##    cat("rooted\n", file = stderr())
     hcd <- as.dendrogram(x@hc)
-    hcd %>% set("labels_col", value = myColorSet[1:NK], k = NK) %>% 
-      set("branches_k_color", value = myColorSet[1:NK], k = NK) %>%
+    hcd %>% set("labels_col", value = myColorSet[1:NC], k = NC) %>% 
+      set("branches_k_color", value = myColorSet[1:NC], k = NC) %>%
       set("branches_lwd", 2) %>% 
       set("labels_cex", 0.7) %>%
       plot(main = "Colored clusters")
   }
-  plotClipped <- function(x, NK, ...) {
+  plotClipped <- function(x, NC, ...) {
  ##   cat("clipped\n", file = stderr())
-    mycut <- mean(rev(x@hc$height)[NK + -1:0])
+    mycut <- mean(rev(x@hc$height)[NC + -1:0])
     hcd <- as.dendrogram(x@hc)
     dend2 <- cut(hcd, h = mycut)
-    dend2$upper %>% set("labels_col", value = myColorSet[1:NK], k = NK) %>% 
-      set("branches_k_color", value = myColorSet[1:NK], k = NK) %>%
+    dend2$upper %>% set("labels_col", value = myColorSet[1:NC], k = NC) %>% 
+      set("branches_k_color", value = myColorSet[1:NC], k = NC) %>%
       set("branches_lwd", 2) %>% 
       set("labels_cex", 1.3) %>%
       plot(main = "Colored clusters")
   }
-  plotUnrooted <- function(x, NK, ...) {
+  plotUnrooted <- function(x, NC, ...) {
  ##   cat("unrooted\n", file = stderr())
-    typer <- cutree(x@hc, k = NK)
+    typer <- cutree(x@hc, k = NC)
     plot(as.phylo(x@hc), type = "unrooted",
          edge.color = "steelblue", edge.width = 2,
          tip.color = myColorSet[typer], cex = 0.7)
   }
 
+  NC <- x@NC
   types <- c("rooted", "clipped", "unrooted")
   type <- match.arg(type, types)
 ##  cat("Calling", type, "\n")
   val <- switch(type,
-                rooted = plotRooted(x, NK, ...),
-                clipped = plotClipped(x, NK, ...),
-                unrooted = plotUnrooted(x, NK, ...),
+                rooted = plotRooted(x, NC, ...),
+                clipped = plotClipped(x, NC, ...),
+                unrooted = plotUnrooted(x, NC, ...),
                 print("Invalid type.")
                 )
-
+  invisible(x)
 })
 
-heat <- function(x, NK=5, ...) {
+heat <- function(x, NC=5, ...) {
   S <- as.matrix(x@distance)
   hc <- x@hc
-  typer <- cutree(hc, k = NK)
+  typer <- cutree(hc, k = NC)
   heatmap(S, ColSideColors = myColorSet[typer],
         Rowv = as.dendrogram(hc),
         Colv = as.dendrogram(hc), col = viridis(64), scale = "none")

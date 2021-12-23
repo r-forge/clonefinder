@@ -1,6 +1,7 @@
 \name{SequenceCluster-class}
 \docType{class}
 \alias{SequenceCluster}
+\alias{updateClusters}
 \alias{SequenceCluster-class}
 \alias{plot,SequenceCluster,missing-method}
 
@@ -15,8 +16,9 @@ returns a new object of the \code{SequenceCluster} class.
   typically pass in a character vector of "words"  to be clustered.
 }
 \usage{
-SequenceCluster(encoded, method = c("needelman", "levenshtein"))
-\S4method{plot}{SequenceCluster,missing}(x, NK = 5, type = "rooted", \dots)
+SequenceCluster(encoded, method = c("needelman", "levenshtein"), NC = 5)
+\S4method{plot}{SequenceCluster,missing}(x, type = "rooted", \dots)
+updateClusters(sc, NC)
 }
 \arguments{
   \item{encoded}{A character vector that contains all words or "sequences"
@@ -26,7 +28,8 @@ SequenceCluster(encoded, method = c("needelman", "levenshtein"))
     Levenshtein edit distance, or "needelman", which uses the
     Needelman-Wunsch global alignment algorithm.}
   \item{x}{An object of the \code{SequenceCluster} class.}
-  \item{NK}{An integer; the number of branches/clusters to cut from the dendrogram..}
+  \item{sc}{An object of the \code{SequenceCluster} class.}
+  \item{NC}{An integer; the number of branches/clusters to cut from the dendrogram.}
   \item{type}{A character strnig; the type of lpot to make. Val;id types
     are "rooted", "clippe", or "unrooted".}
   \item{\dots}{extra arguments for generic or plotting routines}
@@ -36,7 +39,9 @@ SequenceCluster(encoded, method = c("needelman", "levenshtein"))
       \item{\code{method}:}{A character vector describing which
 	algorithm was used.}
       \item{\code{distance}:}{A \code{dist} object.}
-      \item{\code{hc}:}{An \code{hcult} object.}
+      \item{\code{hc}:}{An \code{hclust} object.}
+      \item{\code{NC}:}{An integer; the number of branches/clusters to cut from the dendrogram.}
+      \item{\code{clusters}:}{An integer vector containng cluster assignments.}
   }
 }
 \value{
@@ -51,6 +56,8 @@ sequences <- sequences[!duplicated(sequences)] # dedup
 alfa <- Cipher(sequences)
 enc <- encode(alfa, sequences)                 # encode
 sc <- SequenceCluster(enc)                     # cluster
-plot(sc@hc)                                    # visualize
+plot(sc)                                    # visualize
+sc <- updateClusters(sc, NC = 7)
+plot(sc, type = "unrooted")
 }
 \keyword{ cluster }

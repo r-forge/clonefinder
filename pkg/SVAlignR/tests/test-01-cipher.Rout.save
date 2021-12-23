@@ -1,0 +1,58 @@
+
+R version 4.1.0 (2021-05-18) -- "Camp Pontanezen"
+Copyright (C) 2021 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(SVAlignR)
+> 
+> motif <- "0-50-74-0-50-74-25-26-35"
+> alfa <- Cipher(motif)
+> alfa
+An object of class "Cipher"
+Slot "forward":
+  0  25  26  35  50  74 
+"A" "B" "C" "D" "E" "F" 
+
+Slot "reverse":
+   A    B    C    D    E    F    -    ? 
+ "0" "25" "26" "35" "50" "74"  ":"  "?" 
+
+> 
+> en <-encode(alfa, motif)
+> en
+[1] "AEFAEFBCD"
+> 
+> de <- decode(alfa, en)
+> de
+[1] "0-50-74-0-50-74-25-26-35"
+> de == motif
+[1] TRUE
+> 
+> toolong <- paste(c(LETTERS, letters, 0:9,
++                    "!","@","#", "$", "%", "^", "&", "*", "(", ")"),
++                  collapse = "-")
+> try( beta <- Cipher(toolong) )
+Error in Cipher(toolong) : 
+  We can only handle codes with at most 70 letters.
+
+> 
+> odd <- c(motif, "0-0-50-74-61")
+> try( encode(alfa, odd) )
+Error in .xlate(text, cipher@forward, "\\-", "") : 
+  Text includes unknown characters: 61
+> 
+> proc.time()
+   user  system elapsed 
+   2.06    0.31    2.40 

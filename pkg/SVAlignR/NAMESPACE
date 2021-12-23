@@ -26,5 +26,5 @@ export("Cipher", "encode", "decode")
 
 ### SequenceClusters
 exportClass("SequenceCluster")
-export("SequenceCluster")
+export("SequenceCluster", "updateClusters")
 exportMethods("plot")

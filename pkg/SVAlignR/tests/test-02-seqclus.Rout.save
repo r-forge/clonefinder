@@ -1,0 +1,63 @@
+
+R version 4.1.0 (2021-05-18) -- "Camp Pontanezen"
+Copyright (C) 2021 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(SVAlignR)
+> data(longreads)
+> sequences <- longreads$connection
+> sequences <- sequences[!duplicated(sequences)]
+> alfa <- Cipher(sequences)
+> enc <- encode(alfa, sequences)
+> 
+> head(data.frame(sequences, enc))
+                      sequences         enc
+1  50-74-0-0-50-74-0-50-74-0-50 ZoAAZoAZoAZ
+2  74-0-63-74-0-50-74-0-50-74-0 oAjoAZoAZoA
+3 50-74-0-50-74-0-50-74-0-50-74 ZoAZoAZoAZo
+4 74-50-74-0-50-74-0-50-74-0-50 oZoAZoAZoAZ
+5     0-50-74-0-50-74-0-50-74-0  AZoAZoAZoA
+6              74-0-0-0-50-74-0     oAAAZoA
+> 
+> # specify Levenshtein
+> sc1 <- SequenceCluster(enc, method = "levenshtein", NC = 12)
+> plot(sc1@hc)
+> 
+> # default Needelman-Wunsch
+> sc <- SequenceCluster(enc, NC = 20)
+> plot(sc)
+> # Other plot forms
+> plot(sc, type = "clipped")
+> plot(sc, type = "unrooted")
+> 
+> 
+> # make sure unknown methods fail.
+> try( sc <- SequenceCluster(enc, method = "clustal") )
+Error in match.arg(method) : 
+  'arg' should be one of "needelman", "levenshtein"
+> try( sc3 <- SequenceCluster(enc, method = "leven") ) # Now OK
+> 
+> # same with unkown plot types
+> try( plot(sc, type = "doodle") )
+Error in match.arg(type, types) : 
+  'arg' should be one of "rooted", "clipped", "unrooted"
+> 
+> #### update cluster number
+> sc <- updateClusters(sc, NC = 14)
+> plot(sc, type = "unrooted")
+> 
+> proc.time()
+   user  system elapsed 
+   4.46    0.23    4.73 
