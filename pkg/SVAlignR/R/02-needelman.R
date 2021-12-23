@@ -109,10 +109,10 @@ function(x, type = "rooted", ...) {
   invisible(x)
 })
 
-heat <- function(x, NC=5, ...) {
+heat <- function(x, ...) {
   S <- as.matrix(x@distance)
   hc <- x@hc
-  typer <- cutree(hc, k = NC)
+  typer <- cutree(hc, k = x@NC)
   heatmap(S, ColSideColors = myColorSet[typer],
         Rowv = as.dendrogram(hc),
         Colv = as.dendrogram(hc), col = viridis(64), scale = "none")

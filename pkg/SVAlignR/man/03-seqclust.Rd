@@ -2,6 +2,7 @@
 \docType{class}
 \alias{SequenceCluster}
 \alias{updateClusters}
+\alias{heat}
 \alias{SequenceCluster-class}
 \alias{plot,SequenceCluster,missing-method}
 
@@ -19,6 +20,7 @@ returns a new object of the \code{SequenceCluster} class.
 SequenceCluster(encoded, method = c("needelman", "levenshtein"), NC = 5)
 \S4method{plot}{SequenceCluster,missing}(x, type = "rooted", \dots)
 updateClusters(sc, NC)
+heat(x, \dots)
 }
 \arguments{
   \item{encoded}{A character vector that contains all words or "sequences"
