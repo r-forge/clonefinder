@@ -1,0 +1,243 @@
+---
+title: "SVAlignR and Virus-Associated Cancer"
+author: "Kevin R. Coombes, Keiko Akagi, Davied Symer, and Maura Gillison"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_document:
+    theme: journal
+    highlight: kate
+  toc: true
+vignette: >
+  %\VignetteIndexEntry{SVAlignR and Virus-Associated Cancer}
+  %\VignetteKeywords{OOMPA,CytoGPS,karyotypes,idiograms,graphics}
+  %\VignetteDepends{SVAlignR}
+  %\VignettePackage{SVAlignR}
+  %\VignetteEngine{knitr::rmarkdown}
+---
+
+
+```{r opts, echo=FALSE, results="hide"}
+knitr::opts_chunk$set(fig.width=8, fig.height=5)
+options(width = 88)
+```
+```{r mycss, results="asis", echo=FALSE}
+cat('
+<style type="text/css">
+.figure { text-align: center; }
+.caption { font-weight: bold; }
+</style>
+')
+```
+# Introduction
+Some cancers are associated with the presence of viruses that disrupt chromosomal DNA.
+Among the best known examples are cervical cancers and head-and-neck cancers that are
+associated with human papilloma virus (HPV). Using whole genome short-read sequencing,
+it is possible to identify breakpoints, including those where viral DNA is merged with
+human DNA. It remains an open question whether those fragments are fully integrated into
+a human chromosome or just exist as circular extrachromosomal DNA. Using newer long-read
+sequencing technology, one can obtain information about the order of multiple breakpoints
+in the original DNA molecules in the tumor sample. In this vignette, we describe SVAlignR,
+an R package intended to use these long-read sequences to reconstruct those original molecules.
+
+# Getting Started
+We begin by loading the `SVAlignR` package, and a sample data set.
+```{r Setup}
+library(SVAlignR)
+data(longreads)
+head(longreads[, 1:3])
+```
+Each of the  `r nrow(longreads)` rows in this spreadsheet represents a different Oxford
+Nanopore long read.  The `qname` column is a unique identifier; the `qlen` column contains
+the length of the read in bytes; and the `connections` column lists the breakpoints that 
+he read contains, each of which has been assigned a numeric identifier. We are interested
+in this column.  We have two main goals:
+
+1. Assemble the long-reads (which should be thought of as fragmentary) into complete molecules.
+2. Start constructing a phylogenetic tree showing the evolution of these HPV-human combining
+molecules.
+
+As with many sequence alignment problems, we start by removing any duplicate "reads"; here
+that means duplication of the break-point sequence summaries of the actual reads.
+```{r LR}
+LR0 <- longreads$connection
+names(LR0) <- rownames(longreads)
+LR <- LR0[!duplicated(LR0)]
+weights <- sapply(LR, function(lr) sum(LR0 == lr))
+length(LR) # expect 158
+```
+
+# Clustering Sequences
+We want to cluster the break-point sequences. In order to make use of existing algorithms,
+we need to convert the numeric identifiers into single characters as part of an "alphabet". 
+The `Cipher` class takes in a character vector containing the "words" (that is, our
+break-point sequences) that need to be rewritten. By default, it assumes (as in our example)
+that "letters" are separated by hyphens, identifies the unique symbols, and creates a tool
+to convert back-and-forth from one "alphabet" to another.
+```{r unique.symbols}
+alphabet <- Cipher(LR)
+alphabet
+```
+
+## Forward Translation
+Now we are able to convert the original sequences of numbers into words in our specialized
+alphabet.
+```{r pseudo}
+head(LR)
+pseudo <- encode(alphabet, LR)
+head(pseudo)
+```
+
+Now we want to cluster the long-read break point sequences. The core algorithm is the classic
+Needelman-Wunsch global alignment algorithm, as implemented in the `NameNeedle` R package. As
+used in the `SVAlignR` package, it computes an alignment score between any two sequences based
+on a match score of 2, a mismatch penalty of -6, and a gap penalty of -2.  We fill a square
+matrix with scores for every pair (I, J) of sequences. The resulting scores can be either
+positive or negative. For each row X, we rescale into the interval [0,1] by computing
+$$Y_{IJ} = 1 - \frac{X_{IJ} - min(X_{I.})}{max(X_{I.})-min(X_{I.})}.$$
+Since the scores are not symmetric, we force symmetry by averaging the scaled score matrix and
+its transpose.
+
+We then perform hierarchical clustering using the symmetrized, rescaled score matrix to define
+distances. We cut the dendrogam to cluster the sequences into 20 groups. The number 20 is
+arbitrary. In our data set, it should yield about 8 long-read break-point sequences per cluster.
+For later steps, we also want to make sure that each cluster contains at leeast 2 sequences.
+```{r compute.distances}
+seqclust <- SequenceCluster(pseudo, NC = 20)
+table(seqclust@clusters)
+```
+Now we see that 20 clusters is appropriate. Each cluster is a relatively small size, but they
+all contain more than one sequence so that aligning those sequences will be is meaningful.
+**Figure 1** displays the resulting dendrogram, with each of the 20 clusters shown in a
+different color.
+```{r fig01, fig.cap = "Figure 1: Hierarchical clustering of break point sequences.", fig.width = 12}
+plot(seqclust)
+```
+
+**Figure 2**  contains a simplified view of the same dendrogram, cutting off the clutter
+below the major splits into branches.
+```{r fig02, fig.width=8, fig.cap = "Figure 2: Uncluttered branches."}
+plot(seqclust, type = "clipped")
+```
+
+**Figure 3** displays an alternate view of the dendrogram, emphasizing the relationships
+between clusters. 
+```{r fig03, fig.cap = "Figure 3: Unrooted phylogeny tree.", fig.width=9, fig.height=9}
+plot(seqclust, type = "unrooted")
+```
+
+Both **Figure 2** and, more strongly, **Figure 3** indicate that there are around four
+major branches.
+
+We can also show the dendrogram attached to a heatmap containing the distance matrix.
+
+```{r fig04, fig.cap = "Figure 4: Heatmap of the distance matrix.", fig.width=9, fig.height=9}
+heat(seqclust)
+```
+
+# Aligning Clustered Sequences
+Each of the clusters uses a small enough set of symbols that we can safely rewrite them as
+though they are sequences of amino acids. We then use the `align` function from the `SVAlignR`
+package to perform multiple sequence alignments, using teh "ClustalW" algorithm on each cluster.
+Because the components are not amino acids, however, we do not need to use one of the PAM or
+BLOSUM matrices. Instead, we define a substiuttion matrix that gives the same match and mismatch
+scores to each pair of symbols.
+
+```{r do.align}
+MYSUB <- SVAlignR:::makeMYSUB(match = 2, mismatch = -6)
+NK <- seqclust@NC
+typer <- seqclust@clusters
+
+consensus <- lapply(1:NK, function(K) {
+  alignBranch(LR[typer == K], mysub = MYSUB, gapO = 2, gapE = 0.1)
+})
+names(consensus) <- paste("C", c(rep("0", 9), rep("", 11)), 1:20, sep = "")
+class(consensus)
+length(consensus)
+```
+
+```{r echo=FALSE, eval=FALSE}
+all(names(weights) == names(seqclust@clusters))
+daft <- data.frame(weights, seqclust@clusters)
+daft[weights == 2,]
+```
+
+**Figure 5** contains an example of a multiple sequence alignment.
+```{r fig05 , fig.cap="Figure 5: Example alignment of cluster 15."}
+opar <- par(mai = c(1.02, 0.82, 0.82, 0.82))
+wt <- weights[colnames(consensus[[15]]$meet)]
+showme(consensus[[15]])
+mtext(paste("n =", wt), side = 4, line = 1, at = 1:length(wt), las=2)
+par(opar)
+rm(opar)
+```
+
+## Alignments By Cluster
+*Here**Figure 6** shows all 20 alignments. 
+```{r fig06, fig.cap="Figure 6: Multiple sequence alignments of clusters.", fig.width=20, fig.height=20}
+opar <- par(mfrow = c(4,3))
+for (K in 1:NK) {
+  showme(consensus[[K]], col = SVAlignR:::myColorSet[K])
+}
+par(opar)
+```
+
+## Consensus Sequences
+
+```{r conseq, fig.cap="Alignment of all consensus sequences.", echo=FALSE, eval = FALSE}
+allmodcons <- sapply(consensus, function(X) X$cons)
+allmodcons <- gsub("\\?", "q", allmodcons) # make question mark a letter
+allmodcons <- gsub("\\:", "z", allmodcons) # make rare colon a letter
+while (length(grep("^[qz]", allmodcons) > 0)) {
+  allmodcons <- sub("^q-", "", allmodcons)
+  allmodcons <- sub("^z-", "", allmodcons)
+}
+while (length(grep("[qz]$", allmodcons) > 0)) {
+  allmodcons <- sub("-q$", "", allmodcons)
+  allmodcons <- sub("-z$", "", allmodcons)
+}
+names(allmodcons) <- paste("C", c(rep(0,9), rep("", 11)), 1:20, sep = "")
+
+newsub <- SVAlignR:::makeMYSUB(match = 2, mismatch = -6)
+ab <- alignBranch(allmodcons, mysub = newsub, gapO = 0.1, gapE = 0.2)
+showme(ab)
+
+```
+
+
+```{r fig07, fig.cap = "Figure 7: Unrooted phylogeny tree with consensus sequences.", fig.width=9, fig.height=9}
+library(dendextend)
+myColorSet <- SVAlignR:::myColorSet
+NC <- seqclust@NC
+mycut <- mean(rev(seqclust@hc$height)[NC + -1:0])
+hcd <- as.dendrogram(seqclust@hc)
+dend2 <- cut(hcd, h = mycut)
+DU <- dend2$upper
+blocks <- sapply(consensus, function(X) {
+  X$cons
+})
+labels(DU) <- paste("   [", 1:NC, "]  ",  blocks, "   ", sep = "")
+
+opar <- par(bg = "gray90")
+plot(ape::as.phylo(DU), type = "unrooted", rotate.tree = -20,
+     edge.color = "black", edge.width = 2,
+     lab4ut = "axial", 
+     tip.color = myColorSet[1:NK], cex = 1.2)
+par(opar)
+
+```
+
+```{r makepngs, eval = FALSE, echo=FALSE, results = "hide"}
+resn <- 300
+for (K in 1:NK) {
+  temp <- consensus[[K]]
+  png(file = file.path(paths$figs, paste("cons-", K, ".png", sep = "")),
+      width = 6*resn, height = 4*resn, res = resn, bg = "white")
+  showme(temp, col = SVAlignR:::myColorSet[K], cex = 0.5)
+  dev.off()
+}
+```
+
+# Appendix
+```{r si}
+sessionInfo()
+```
