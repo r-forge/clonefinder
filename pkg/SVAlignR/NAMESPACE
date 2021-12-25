@@ -7,18 +7,18 @@ importMethodsFrom("oompaBase", "plot")
 #importFrom("gdata", "read.xls")
 
 importFrom("graphics", "image", "mtext", "text")
+importFrom("grDevices", "topo.colors")
 importFrom("stats", "hclust", "as.dendrogram", "as.dist", "cutree", "heatmap")
 importFrom("utils", "adist")
 
 ### Computational models
 importFrom("NameNeedle", "needleScores", "defaultNeedleParams")
-importFrom("msa", "msa")
+importFrom("msa", "msa", "msaConsensusSequence", "msaClustalW")
+importFrom("Biostrings", "AAStringSet")
 
 ### graphing
 importFrom("dendextend", "set", "%>%")
 importFrom("ape", "as.phylo")
-
-### BLOSUM62
 
 ### Exports
 exportClass("Cipher")
@@ -26,5 +26,6 @@ export("Cipher", "encode", "decode")
 
 ### SequenceClusters
 exportClass("SequenceCluster")
-export("SequenceCluster", "updateClusters", "heat")
+export("SequenceCluster", "updateClusters", "heat", "align", "alignBranch", "showme")
 exportMethods("plot")
+

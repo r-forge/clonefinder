@@ -1,1 +1,2 @@
 * Update the SequenceClustyer man page to give a more complete description of visualization code.
+* Decide whether to convert "heat" to a generic function called "heatmap".

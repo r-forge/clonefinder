@@ -113,8 +113,13 @@ heat <- function(x, ...) {
   S <- as.matrix(x@distance)
   hc <- x@hc
   typer <- cutree(hc, k = x@NC)
+  if(requireNamespace("viridisLite")) {
+    colscheme <- viridisLite::viridis(64)
+  } else {
+    colscheme <- topo.colors(64)
+  }
   heatmap(S, ColSideColors = myColorSet[typer],
         Rowv = as.dendrogram(hc),
-        Colv = as.dendrogram(hc), col = viridis(64), scale = "none")
+        Colv = as.dendrogram(hc), col = colscheme, scale = "none")
 }
 

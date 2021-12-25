@@ -30,8 +30,6 @@ data("longreads")
   Characterization of long reads as a sequence of well-defined
   break points was performed by Keiko Akagi.
 }
-\references{
-}
 \author{
   Kevin R. Coombes <krc@silicovore.com>
 }

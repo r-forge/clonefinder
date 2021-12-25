@@ -1,37 +1,34 @@
+makeMYSUB <- function(match = 5, mismatch = -2) {
+  lab <- c(LETTERS[c(-15, -21)], "*" )
+  MYSUB <- matrix(mismatch, 25, 25, dimnames = list(lab, lab))
+  diag(MYSUB) <- match
+  MYSUB
+}
+
 ### Inputs:
 ### 'sequences' is a character vector representing sequences
-### in an arbitrary alphabet with at most 26 distinct characters
+### in an arbitrary alphabet with at most 25 distinct characters
 ###
 ### Values = a list with three components
 ###    babel = original sequences translated into an AAStringSet
 ###    aligned = results of an alignment algorithm
 ###    alignedOriginal = results translated back to starting alphabet
-align <- function(sequences, mysub = MYSUB, gapO = 10, gapE = 0.2) {
+align <- function(sequences, mysub = NULL, gapO = 10, gapE = 0.2) {
+  if (is.null(mysub)) mysub <- makeMYSUB
   U2 <- sort(unique(unlist(strsplit(sequences, ""))))
-  if (length(U2) > 26) {
-    stop("Cannot handle an alphabet with more than 26 letter!")
+  if (length(U2) > 25) {
+    stop("Cannot handle an alphabet with more than 25 letter!")
   }
   ## Translate from the starting alphabet to amino acids
-  rewrite <- AA_ALPHABET[1:length(U2)]
-  names(rewrite) <- U2
-  tempaa <- sapply(strsplit(sequences, ""), function(X) {
-    paste(rewrite[X], collapse = "")
-  })
+  protein <- Cipher(sequences, split = "", extras = c("-" = "-", "?" = "?"))
+  tempaa <- .xlate(sequences, protein@forward, "", "")
   babel <- AAStringSet(tempaa) # pretend we have proteins
   ## Align the sequences with a custom matrix
   aligned <- msa(babel, method = "ClustalW",
                  substitutionMatrix = mysub, gapOpening = gapO, gapExtension = gapE)
   ## Translate back to the original alphabet
-  backme <- names(rewrite)
-  names(backme) <- rewrite
-  backme <- c(backme, "-" = "-", "?" = "?")
-  reverse <- sapply(strsplit(as.character(aligned), ""), function(X) {
-    paste(backme[X], collapse = "")
-  })
-  
-  cons <- msaConsensusSequence(aligned)
-  rcons <- strsplit(msaConsensusSequence(aligned), "")
-  xcons <- .xlate(rcons, backme, "")
+  reverse <- .xlate(as.character(aligned), protein@reverse, "", "")
+  xcons  <- .xlate(msaConsensusSequence(aligned), protein@reverse, "", "")
 
   list(babel = babel,
        aligned = aligned,
@@ -39,23 +36,17 @@ align <- function(sequences, mysub = MYSUB, gapO = 10, gapE = 0.2) {
        cons = xcons)
 }
 
-aliognBranch <- function() {
-}
-
-alignBranches <- function()  {
-}
-
-computeConsensus <- function() {
-}
-
-revert <- function(stuff) {
-  A <- stuff$alignedOriginal
-  xcons <- .xlate(strsplit(stuff$cons, ""), omega, "-")
-  temp <- as.character(A)
-  names(temp) <- names(A)
-  back <- .xlate(strsplit(temp, ""), omega, "-")
+alignBranch <- function(sequences, mysub = NULL, gapO = 10, gapE = 0.2) {
+  ## assume we have names on the individual sequences
+  if (is.null(mysub)) mysub <- makeMYSUB
+  seqs <- sequences[!duplicated(sequences)]  # dedup
+  alfa <- Cipher(seqs)
+  enc  <- encode(alfa, seqs)                 # encode as though amino acids
+  sva  <- align(enc, mysub, gapO, gapE)      # align using ClLustalW
+  cons <- decode(alfa, sva$cons)             # decode the consensus sequence
+  back <- decode(alfa, sva$alignedOriginal)  # decode the aligned sequences
   rack <- strsplit(back, "-")
-  list(meet = as.matrix(as.data.frame( rack )), cons = xcons)
+  list(meet = as.matrix(as.data.frame( rack )), cons = cons)
 }
 
 showme <- function(twoparts, col = "black", cex = 1) {
@@ -65,7 +56,7 @@ showme <- function(twoparts, col = "black", cex = 1) {
   matr[cons == "?", ] <- 2
   matr[!(cons %in% c("?", ":"))] <- 3
   image(1:nrow(meet), 1:ncol(meet),
-        matr, col = palette36[c(2, 24, 28)],
+        matr, col = c("gray89", "navajowhite", "lightsteelblue1"),
         yaxt = "n", xlab = "Position", ylab = "", zlim = c(1,3))
   for (i in 1:nrow(meet)) {
     text(i, 1:ncol(meet), meet[i,], cex = cex)
