@@ -1,0 +1,146 @@
+
+R version 4.1.0 (2021-05-18) -- "Camp Pontanezen"
+Copyright (C) 2021 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(SVAlignR)
+> data(longreads)
+> seqs <- longreads$connection[1:15]
+> pad <- c(rep("0", 9), rep("", 6))
+> names(seqs) <- paste("LR", pad, 1:length(seqs), sep = "")
+> seqs <- seqs[!duplicated(seqs)]
+> alfa <- Cipher(seqs)
+> ### Since the encoding here is identical to the re-encoding internally to 'align',
+> ### we manually create an alternate one for debugging purposes
+> ff <- rev(LETTERS)[1:6]
+> ff <- LETTERS[c(13:14, 15:18)]
+> rr <- names(ff) <- names(alfa@forward)
+> names(rr) <- ff
+> rr <- c(rr, "-" = ":", "?" = "?")
+> beta <- new("Cipher", forward = ff, reverse = rr)
+> 
+> mysub <- SVAlignR:::makeMYSUB(match = 2, mismatch = -6)
+> ### Use beta-encoding
+> enc <- encode(beta, seqs)
+> svb <- align(enc, mysub = mysub)
+use user defined matrix
+> svb
+$babel
+AAStringSet object of length 14:
+     width seq                                              names               
+ [1]    11 BEAABEABEAB                                      LR01
+ [2]    11 EACEABEABEA                                      LR02
+ [3]    11 BEABEABEABE                                      LR03
+ [4]    11 EBEABEABEAB                                      LR04
+ [5]    10 ABEABEABEA                                       LR06
+ ...   ... ...
+[10]     7 ABEAABE                                          LR11
+[11]     8 BEABEABE                                         LR12
+[12]     7 BEAFFAF                                          LR13
+[13]     7 EABEBEA                                          LR14
+[14]     6 EABEAB                                           LR15
+
+$aligned
+CLUSTAL 2.1  
+
+Call:
+   msa(babel, method = "ClustalW", substitutionMatrix = mysub, gapOpening = gapO,     gapExtension = gapE)
+
+MsaAAMultipleAlignment with 14 rows and 15 columns
+     aln             names
+ [1] EAAABEA-------- LR07
+ [2] EAAABDAB------- LR08
+ [3] ----BEAABEABEAB LR01
+ [4] ---ABEAABE----- LR11
+ [5] --EACEAB-EABEA- LR02
+ [6] ---ABEAB-EABEA- LR06
+ [7] -BEABEAB-EABE-- LR03
+ [8] ----BEAB-EABE-- LR12
+ [9] EBEABEAB-EAB--- LR04
+[10] -----EAB-EAB--- LR15
+[11] --BEBEAB-EB-E-- LR10
+[12] -----EAB-EB-EA- LR14
+[13] ---ABEAB-EB-E-- LR09
+[14] ----BEAFFAF---- LR13
+ Con ---ABEAB-EA?E-- Consensus 
+
+$alignedOriginal
+             LR07              LR08              LR01              LR11 
+"QMMMNQM--------" "QMMMNPMN-------" "----NQMMNQMNQMN" "---MNQMMNQ-----" 
+             LR02              LR06              LR03              LR12 
+"--QMOQMN-QMNQM-" "---MNQMN-QMNQM-" "-NQMNQMN-QMNQ--" "----NQMN-QMNQ--" 
+             LR04              LR15              LR10              LR14 
+"QNQMNQMN-QMN---" "-----QMN-QMN---" "--NQNQMN-QN-Q--" "-----QMN-QN-QM-" 
+             LR09              LR13 
+"---MNQMN-QN-Q--" "----NQMRRMR----" 
+
+$cons
+[1] "---MNQMN-QM?Q--"
+
+> db <- decode(beta, svb$alignedOriginal)
+> ob <- db[order(names(db))]
+> decode(beta, svb$cons)
+[1] ":-:-:-0-50-74-0-50-:-74-0-?-74-:-:"
+> ### Use alfa-encoding
+> reup <- encode(alfa, seqs)
+> sva <- align(reup, mysub = mysub)
+use user defined matrix
+> da <- decode(alfa, sva$alignedOriginal)
+> oa <- da[order(names(da))]
+> decode(alfa, sva$cons)
+[1] ":-:-:-0-50-74-0-50-:-74-0-?-74-:-:"
+> ### compare
+> data.frame(oa, ob)
+                                        oa
+LR01  :-:-:-:-50-74-0-0-50-74-0-50-74-0-50
+LR02  :-:-74-0-63-74-0-50-:-74-0-50-74-0-:
+LR03 :-50-74-0-50-74-0-50-:-74-0-50-74-:-:
+LR04 74-50-74-0-50-74-0-50-:-74-0-50-:-:-:
+LR06   :-:-:-0-50-74-0-50-:-74-0-50-74-0-:
+LR07      74-0-0-0-50-74-0-:-:-:-:-:-:-:-:
+LR08     74-0-0-0-50-65-0-50-:-:-:-:-:-:-:
+LR09   :-:-:-0-50-74-0-50-:-74-50-:-74-:-:
+LR10 :-:-50-74-50-74-0-50-:-74-50-:-74-:-:
+LR11     :-:-:-0-50-74-0-0-50-74-:-:-:-:-:
+LR12   :-:-:-:-50-74-0-50-:-74-0-50-74-:-:
+LR13       :-:-:-:-50-74-0-x-x-0-x-:-:-:-:
+LR14    :-:-:-:-:-74-0-50-:-74-50-:-74-0-:
+LR15     :-:-:-:-:-74-0-50-:-74-0-50-:-:-:
+                                        ob
+LR01  :-:-:-:-50-74-0-0-50-74-0-50-74-0-50
+LR02  :-:-74-0-63-74-0-50-:-74-0-50-74-0-:
+LR03 :-50-74-0-50-74-0-50-:-74-0-50-74-:-:
+LR04 74-50-74-0-50-74-0-50-:-74-0-50-:-:-:
+LR06   :-:-:-0-50-74-0-50-:-74-0-50-74-0-:
+LR07      74-0-0-0-50-74-0-:-:-:-:-:-:-:-:
+LR08     74-0-0-0-50-65-0-50-:-:-:-:-:-:-:
+LR09   :-:-:-0-50-74-0-50-:-74-50-:-74-:-:
+LR10 :-:-50-74-50-74-0-50-:-74-50-:-74-:-:
+LR11     :-:-:-0-50-74-0-0-50-74-:-:-:-:-:
+LR12   :-:-:-:-50-74-0-50-:-74-0-50-74-:-:
+LR13       :-:-:-:-50-74-0-x-x-0-x-:-:-:-:
+LR14    :-:-:-:-:-74-0-50-:-74-50-:-74-0-:
+LR15     :-:-:-:-:-74-0-50-:-74-0-50-:-:-:
+> all(oa == ob)
+[1] TRUE
+> 
+> ## test the simple shortcut method
+> ab <- alignBranch(seqs, mysub)
+use user defined matrix
+> showme(ab)
+> 
+> proc.time()
+   user  system elapsed 
+   2.07    0.17    2.35 

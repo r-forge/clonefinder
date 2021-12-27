@@ -67,7 +67,10 @@ length(LR) # expect 158
 ```
 
 # Clustering Sequences
-We want to cluster the break-point sequences. In order to make use of existing algorithms,
+We want to cluster the break-point sequences.
+
+## Recoding
+In order to make use of existing algorithms,
 we need to convert the numeric identifiers into single characters as part of an "alphabet". 
 The `Cipher` class takes in a character vector containing the "words" (that is, our
 break-point sequences) that need to be rewritten. By default, it assumes (as in our example)
@@ -78,7 +81,6 @@ alphabet <- Cipher(LR)
 alphabet
 ```
 
-## Forward Translation
 Now we are able to convert the original sequences of numbers into words in our specialized
 alphabet.
 ```{r pseudo}
@@ -87,7 +89,10 @@ pseudo <- encode(alphabet, LR)
 head(pseudo)
 ```
 
-Now we want to cluster the long-read break point sequences. The core algorithm is the classic
+## Clusters
+The recoding step is includes inth e `SequenceCluster` constructor and will happen automatically.
+So, to cluster the long-read break point sequences, we just need to cal the constructor on the
+(named and de-duplicated) sequences. The core algorithm is the classic
 Needelman-Wunsch global alignment algorithm, as implemented in the `NameNeedle` R package. As
 used in the `SVAlignR` package, it computes an alignment score between any two sequences based
 on a match score of 2, a mismatch penalty of -6, and a gap penalty of -2.  We fill a square
@@ -102,7 +107,7 @@ distances. We cut the dendrogam to cluster the sequences into 20 groups. The num
 arbitrary. In our data set, it should yield about 8 long-read break-point sequences per cluster.
 For later steps, we also want to make sure that each cluster contains at leeast 2 sequences.
 ```{r compute.distances}
-seqclust <- SequenceCluster(pseudo, NC = 20)
+seqclust <- SequenceCluster(LR, NC = 20)
 table(seqclust@clusters)
 ```
 Now we see that 20 clusters is appropriate. Each cluster is a relatively small size, but they

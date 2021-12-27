@@ -6,13 +6,14 @@ setOldClass("hclust")
 setClass("SequenceCluster",
          slots = c(
            method = "character",
+           rawSequences = "character",
            distance = "dist",
            hc = "hclust",
            NC = "numeric",
            clusters = "numeric")
          )
 
-SequenceCluster <- function(encoded, method = c("needelman", "levenshtein"), NC = 5) {
+SequenceCluster <- function(rawseq, method = c("needelman", "levenshtein"), NC = 5) {
   method <- match.arg(method)
 
   doNeedelman <- function(pseudo) {
@@ -37,6 +38,25 @@ SequenceCluster <- function(encoded, method = c("needelman", "levenshtein"), NC 
     }
     as.dist(mat)
   }
+  ## Make sure everything is named
+  if (is.null(names(rawseq))) {
+    warning("Adding names to input sequences.")
+    L <- length(rawseq)
+    nzero <- trunc(log10(1:L))
+    pad <- sapply(max(nzero) - nzero, function(n) paste(rep("0", n), collapse = ""))
+    names(rawseq) <- paste("SEQ", pad, 1:L, sep = "")
+  }
+
+  ## dedup
+  if (any(dup <- duplicated(rawseq))) {
+    warning("Removing", sum(dup), "duplicated sequences.\n")
+    rawseq <- rawseq[!dup]
+  }
+
+  ## encode the input sequences
+  alphabet <- Cipher(rawseq)
+  encoded <- encode(alphabet, rawseq)
+  ## compute distance matrix as 'dist' object
   symm <- switch(method,
                  needelman = doNeedelman(encoded),
                  levenshtein = doLevenshtein(encoded),
@@ -46,6 +66,7 @@ SequenceCluster <- function(encoded, method = c("needelman", "levenshtein"), NC 
   clust <- cutree(hc, k = NC)
   new("SequenceCluster",
       method = method,
+      rawSequences = rawseq,
       distance = symm,
       hc = hc,
       NC = NC,

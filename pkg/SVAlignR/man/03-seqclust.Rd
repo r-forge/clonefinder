@@ -17,13 +17,13 @@ returns a new object of the \code{SequenceCluster} class.
   typically pass in a character vector of "words"  to be clustered.
 }
 \usage{
-SequenceCluster(encoded, method = c("needelman", "levenshtein"), NC = 5)
+SequenceCluster(rawseq, method = c("needelman", "levenshtein"), NC = 5)
 \S4method{plot}{SequenceCluster,missing}(x, type = "rooted", \dots)
 updateClusters(sc, NC)
 heat(x, \dots)
 }
 \arguments{
-  \item{encoded}{A character vector that contains all words or "sequences"
+  \item{rawseq}{A character vector that contains all words or "sequences"
     to be clustered.}
   \item{method}{The algorithm to use to compute distances between
     sequences. The choices are "levenshstein", which uses the
@@ -40,6 +40,8 @@ heat(x, \dots)
   \describe{
       \item{\code{method}:}{A character vector describing which
 	algorithm was used.}
+      \item{rawSequences}{A character vector that contains the input words or "sequences"
+	tthat were clustered.}
       \item{\code{distance}:}{A \code{dist} object.}
       \item{\code{hc}:}{An \code{hclust} object.}
       \item{\code{NC}:}{An integer; the number of branches/clusters to cut from the dendrogram.}
@@ -53,11 +55,9 @@ class.
 \author{Kevin R. Coombes <krc@silicovore.com>}
 \examples{
 data(longreads)
-sequences <- longreads$connection[1:30]
+sequences <- longreads$connection[1:30]        # named character vector
 sequences <- sequences[!duplicated(sequences)] # dedup
-alfa <- Cipher(sequences)
-enc <- encode(alfa, sequences)                 # encode
-sc <- SequenceCluster(enc)                     # cluster
+sc <- SequenceCluster(sequences)               # cluster
 plot(sc)                                    # visualize
 sc <- updateClusters(sc, NC = 7)
 plot(sc, type = "unrooted")

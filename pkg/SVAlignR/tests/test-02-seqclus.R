@@ -1,18 +1,21 @@
 library(SVAlignR)
 data(longreads)
 sequences <- longreads$connection
-sequences <- sequences[!duplicated(sequences)]
-alfa <- Cipher(sequences)
-enc <- encode(alfa, sequences)
 
-head(data.frame(sequences, enc))
-
-# specify Levenshtein
-sc1 <- SequenceCluster(enc, method = "levenshtein", NC = 12)
+# specify Levenshtein (should get two warnings)
+sc1 <- SequenceCluster(sequences, method = "levenshtein", NC = 12)
 plot(sc1@hc)
 
+# after assigning names, should get one warning
+names(sequences) <- rownames(longreads)
+sc1 <- SequenceCluster(sequences, method = "levenshtein", NC = 12)
+
+# after removing dupklcairtes, should get no warnings
+sequences <- sequences[!duplicated(sequences)]
+sc1 <- SequenceCluster(sequences, method = "levenshtein", NC = 12)
+
 # default Needelman-Wunsch
-sc <- SequenceCluster(enc, NC = 20)
+sc <- SequenceCluster(sequences, NC = 20)
 plot(sc)
 # Other plot forms
 plot(sc, type = "clipped")
@@ -20,10 +23,10 @@ plot(sc, type = "unrooted")
 
 
 # make sure unknown methods fail.
-try( sc <- SequenceCluster(enc, method = "clustal") )
+try( sc <- SequenceCluster(sedquences, method = "clustal") )
 try( sc3 <- SequenceCluster(enc, method = "leven") ) # Now OK
 
-# same with unkown plot types
+# same with unknown plot types
 try( plot(sc, type = "doodle") )
 
 #### update cluster number
