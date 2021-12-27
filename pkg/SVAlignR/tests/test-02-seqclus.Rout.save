@@ -17,26 +17,33 @@ Type 'q()' to quit R.
 
 > library(SVAlignR)
 > data(longreads)
-> sequences <- longreads$connection
-> sequences <- sequences[!duplicated(sequences)]
-> alfa <- Cipher(sequences)
-> enc <- encode(alfa, sequences)
+> N <- 32
+> sequences <- longreads$connection[1:N]
 > 
-> head(data.frame(sequences, enc))
-                      sequences         enc
-1  50-74-0-0-50-74-0-50-74-0-50 ZoAAZoAZoAZ
-2  74-0-63-74-0-50-74-0-50-74-0 oAjoAZoAZoA
-3 50-74-0-50-74-0-50-74-0-50-74 ZoAZoAZoAZo
-4 74-50-74-0-50-74-0-50-74-0-50 oZoAZoAZoAZ
-5     0-50-74-0-50-74-0-50-74-0  AZoAZoAZoA
-6              74-0-0-0-50-74-0     oAAAZoA
-> 
-> # specify Levenshtein
-> sc1 <- SequenceCluster(enc, method = "levenshtein", NC = 12)
+> # specify Levenshtein (should get two warnings)
+> sc1 <- SequenceCluster(sequences, method = "levenshtein", NC = 4)
+Warning messages:
+1: In SequenceCluster(sequences, method = "levenshtein", NC = 4) :
+  Adding names to input sequences.
+2: In SequenceCluster(sequences, method = "levenshtein", NC = 4) :
+  Removing 6 duplicated sequences.
+
 > plot(sc1@hc)
 > 
+> # after assigning names, should get one warning
+> names(sequences) <- rownames(longreads)[1:N]
+> sc1 <- SequenceCluster(sequences, method = "levenshtein", NC = 4)
+Warning message:
+In SequenceCluster(sequences, method = "levenshtein", NC = 4) :
+  Removing 6 duplicated sequences.
+
+> 
+> # after removing duplicates, should get no warnings
+> sequences <- sequences[!duplicated(sequences)]
+> sc1 <- SequenceCluster(sequences, method = "levenshtein", NC = 4)
+> 
 > # default Needelman-Wunsch
-> sc <- SequenceCluster(enc, NC = 20)
+> sc <- SequenceCluster(sequences, NC = 4)
 > plot(sc)
 > # Other plot forms
 > plot(sc, type = "clipped")
@@ -44,20 +51,20 @@ Type 'q()' to quit R.
 > 
 > 
 > # make sure unknown methods fail.
-> try( sc <- SequenceCluster(enc, method = "clustal") )
+> try( sc <- SequenceCluster(sequences, method = "clustal") )
 Error in match.arg(method) : 
   'arg' should be one of "needelman", "levenshtein"
-> try( sc3 <- SequenceCluster(enc, method = "leven") ) # Now OK
+> try( sc3 <- SequenceCluster(sequences, method = "leven") ) # Now OK
 > 
-> # same with unkown plot types
+> # same with unknown plot types
 > try( plot(sc, type = "doodle") )
 Error in match.arg(type, types) : 
   'arg' should be one of "rooted", "clipped", "unrooted"
 > 
 > #### update cluster number
-> sc <- updateClusters(sc, NC = 14)
+> sc <- updateClusters(sc, NC = 3)
 > plot(sc, type = "unrooted")
 > 
 > proc.time()
    user  system elapsed 
-   4.46    0.23    4.73 
+   1.92    0.28    2.21 

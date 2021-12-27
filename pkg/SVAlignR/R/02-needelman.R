@@ -49,7 +49,7 @@ SequenceCluster <- function(rawseq, method = c("needelman", "levenshtein"), NC =
 
   ## dedup
   if (any(dup <- duplicated(rawseq))) {
-    warning("Removing", sum(dup), "duplicated sequences.\n")
+    warning("Removing ", sum(dup), " duplicated sequences.\n")
     rawseq <- rawseq[!dup]
   }
 

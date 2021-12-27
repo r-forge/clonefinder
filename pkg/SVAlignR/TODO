@@ -1,2 +1,6 @@
-* Update the SequenceClustyer man page to give a more complete description of visualization code.
-* Decide whether to convert "heat" to a generic function called "heatmap".
+* Update the SequenceCluster man page to give a more complete
+ description of visualization code.
+* Decide whether to convert "heat" to a generic function called
+ "heatmap".
+* Decide on a class structure for the rtesults of aligning branches.
+ Possibly inherited from SequenceCluster.
