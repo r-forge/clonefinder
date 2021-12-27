@@ -40,6 +40,26 @@ Slot "reverse":
 > de == motif
 [1] TRUE
 > 
+> ## bad Cipher inputs
+> try( Cipher(13) )
+Error in strsplit(sampleText, split) : non-character argument
+> try( Cipher(motif, extras = 13) )
+Error in Cipher(motif, extras = 13) : 
+  All elements of 'extras' must have names.
+
+> try( Cipher(motif, extras = c(z = "zero", 13)) )
+Error in Cipher(motif, extras = c(z = "zero", 13)) : 
+  All elements of 'extras' must have names.
+
+> try( Cipher(motif, extras = c(A = "zero")) )
+Error in Cipher(motif, extras = c(A = "zero")) : 
+  Names of 'extras' cannot include symbols in 'sampleText'.
+
+> try( Cipher(motif, extras = c("x" = 26)) )
+Error in Cipher(motif, extras = c(x = 26)) : 
+  Values of 'extras' cannot match letter in the 'forward' cipher.
+
+> 
 > toolong <- paste(c(LETTERS, letters, 0:9,
 +                    "!","@","#", "$", "%", "^", "&", "*", "(", ")"),
 +                  collapse = "-")
@@ -52,7 +72,11 @@ Error in Cipher(toolong) :
 > try( encode(alfa, odd) )
 Error in .xlate(text, cipher@forward, "\\-", "") : 
   Text includes unknown characters: 61
+> try( encode(odd, alfa) )
+Error in strsplit(txt, split) : non-character argument
+> 
+> 
 > 
 > proc.time()
    user  system elapsed 
-   2.06    0.31    2.40 
+   1.95    0.21    2.18 

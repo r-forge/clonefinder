@@ -60,4 +60,4 @@ en
 de <- decode(alfa, en)
 de
 }
-\keyword{ cluster }
+\keyword{ math }

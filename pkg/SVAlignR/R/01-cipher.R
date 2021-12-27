@@ -15,9 +15,18 @@ Cipher <- function(sampleText, split = "-", extras = c("-" = ":", "?" = "?")) {
   }
   forward  <- base[1:length(U)]
   names(forward) <- U
+  if (is.null(names(extras)) | any(names(extras) == "")) {
+    stop("All elements of 'extras' must have names.\n")
+  }
+  if (any(duplicated(c(names(forward), extras)))) {
+    stop("Values of 'extras' cannot match letter in the 'forward' cipher.\n")
+  }
   reverse <- names(forward)
   names(reverse) <- forward
   reverse <- c(reverse, extras)
+  if (any(duplicated(names(reverse)))) {
+    stop("Names of 'extras' cannot include symbols in 'sampleText'.\n")
+  }
   new("Cipher", forward = forward, reverse = reverse)
 }
 

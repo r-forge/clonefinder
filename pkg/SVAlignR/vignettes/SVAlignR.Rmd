@@ -33,11 +33,13 @@ Some cancers are associated with the presence of viruses that disrupt chromosoma
 Among the best known examples are cervical cancers and head-and-neck cancers that are
 associated with human papilloma virus (HPV). Using whole genome short-read sequencing,
 it is possible to identify breakpoints, including those where viral DNA is merged with
-human DNA. It remains an open question whether those fragments are fully integrated into
+human DNA. Each breakpoint defines a  local instance of "structural variation" (SV) where
+segments of chromosomes are joined together in non-normal ways. It remains an open
+question whether those fragments are fully integrated into
 a human chromosome or just exist as circular extrachromosomal DNA. Using newer long-read
 sequencing technology, one can obtain information about the order of multiple breakpoints
 in the original DNA molecules in the tumor sample. In this vignette, we describe SVAlignR,
-an R package intended to use these long-read sequences to reconstruct those original molecules.
+an R package intended to use these long-read sequences to reconstruct the original molecules.
 
 # Getting Started
 We begin by loading the `SVAlignR` package, and a sample data set.
@@ -49,7 +51,7 @@ head(longreads[, 1:3])
 Each of the  `r nrow(longreads)` rows in this spreadsheet represents a different Oxford
 Nanopore long read.  The `qname` column is a unique identifier; the `qlen` column contains
 the length of the read in bytes; and the `connections` column lists the breakpoints that 
-he read contains, each of which has been assigned a numeric identifier. We are interested
+the read contains, each of which has been assigned a numeric identifier. We are interested
 in this column.  We have two main goals:
 
 1. Assemble the long-reads (which should be thought of as fragmentary) into complete molecules.
@@ -90,8 +92,8 @@ head(pseudo)
 ```
 
 ## Clusters
-The recoding step is includes inth e `SequenceCluster` constructor and will happen automatically.
-So, to cluster the long-read break point sequences, we just need to cal the constructor on the
+The recoding step is already included in the `SequenceCluster` constructor and will happen automatically.
+So, to cluster the long-read break point sequences, we just need to call the constructor on the
 (named and de-duplicated) sequences. The core algorithm is the classic
 Needelman-Wunsch global alignment algorithm, as implemented in the `NameNeedle` R package. As
 used in the `SVAlignR` package, it computes an alignment score between any two sequences based
@@ -99,7 +101,7 @@ on a match score of 2, a mismatch penalty of -6, and a gap penalty of -2.  We fi
 matrix with scores for every pair (I, J) of sequences. The resulting scores can be either
 positive or negative. For each row X, we rescale into the interval [0,1] by computing
 $$Y_{IJ} = 1 - \frac{X_{IJ} - min(X_{I.})}{max(X_{I.})-min(X_{I.})}.$$
-Since the scores are not symmetric, we force symmetry by averaging the scaled score matrix and
+Since the scores need not be symmetric, we force symmetry by averaging the scaled score matrix and
 its transpose.
 
 We then perform hierarchical clustering using the symmetrized, rescaled score matrix to define
@@ -110,7 +112,7 @@ For later steps, we also want to make sure that each cluster contains at leeast 
 seqclust <- SequenceCluster(LR, NC = 20)
 table(seqclust@clusters)
 ```
-Now we see that 20 clusters is appropriate. Each cluster is a relatively small size, but they
+Now we see why 20 clusters is appropriate. Each cluster is a relatively small size, but they
 all contain more than one sequence so that aligning those sequences will be is meaningful.
 **Figure 1** displays the resulting dendrogram, with each of the 20 clusters shown in a
 different color.
@@ -130,7 +132,7 @@ between clusters.
 plot(seqclust, type = "unrooted")
 ```
 
-Both **Figure 2** and, more strongly, **Figure 3** indicate that there are around four
+Both **Figure 2** and, more strongly, **Figure 3** indicate that there are approximately four
 major branches.
 
 We can also show the dendrogram attached to a heatmap containing the distance matrix.
@@ -142,13 +144,13 @@ heat(seqclust)
 # Aligning Clustered Sequences
 Each of the clusters uses a small enough set of symbols that we can safely rewrite them as
 though they are sequences of amino acids. We then use the `align` function from the `SVAlignR`
-package to perform multiple sequence alignments, using teh "ClustalW" algorithm on each cluster.
+package to perform multiple sequence alignments, using the "ClustalW" algorithm on each cluster.
 Because the components are not amino acids, however, we do not need to use one of the PAM or
 BLOSUM matrices. Instead, we define a substiuttion matrix that gives the same match and mismatch
 scores to each pair of symbols.
 
 ```{r do.align}
-MYSUB <- SVAlignR:::makeMYSUB(match = 2, mismatch = -6)
+MYSUB <- makeSubsMatrix(match = 2, mismatch = -6)
 NK <- seqclust@NC
 typer <- seqclust@clusters
 
@@ -177,7 +179,7 @@ rm(opar)
 ```
 
 ## Alignments By Cluster
-*Here**Figure 6** shows all 20 alignments. 
+**Figure 6** shows all 20 alignments. 
 ```{r fig06, fig.cap="Figure 6: Multiple sequence alignments of clusters.", fig.width=20, fig.height=20}
 opar <- par(mfrow = c(4,3))
 for (K in 1:NK) {
@@ -202,7 +204,7 @@ while (length(grep("[qz]$", allmodcons) > 0)) {
 }
 names(allmodcons) <- paste("C", c(rep(0,9), rep("", 11)), 1:20, sep = "")
 
-newsub <- SVAlignR:::makeMYSUB(match = 2, mismatch = -6)
+newsub <- makeSubsMatrix(match = 2, mismatch = -6)
 ab <- alignBranch(allmodcons, mysub = newsub, gapO = 0.1, gapE = 0.2)
 showme(ab)
 

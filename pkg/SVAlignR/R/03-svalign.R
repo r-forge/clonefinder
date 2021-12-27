@@ -1,4 +1,4 @@
-makeMYSUB <- function(match = 5, mismatch = -2) {
+makeSubsMatrix <- function(match = 5, mismatch = -2) {
   lab <- c(LETTERS[c(-15, -21)], "*" )
   MYSUB <- matrix(mismatch, 25, 25, dimnames = list(lab, lab))
   diag(MYSUB) <- match
@@ -14,7 +14,7 @@ makeMYSUB <- function(match = 5, mismatch = -2) {
 ###    aligned = results of an alignment algorithm
 ###    alignedOriginal = results translated back to starting alphabet
 align <- function(sequences, mysub = NULL, gapO = 10, gapE = 0.2) {
-  if (is.null(mysub)) mysub <- makeMYSUB
+  if (is.null(mysub)) mysub <- makeSubsMatrix
   U2 <- sort(unique(unlist(strsplit(sequences, ""))))
   if (length(U2) > 25) {
     stop("Cannot handle an alphabet with more than 25 letter!")
@@ -38,11 +38,11 @@ align <- function(sequences, mysub = NULL, gapO = 10, gapE = 0.2) {
 
 alignBranch <- function(sequences, mysub = NULL, gapO = 10, gapE = 0.2) {
   ## assume we have names on the individual sequences
-  if (is.null(mysub)) mysub <- makeMYSUB
+  if (is.null(mysub)) mysub <- makeSubsMatrix
   seqs <- sequences[!duplicated(sequences)]  # dedup
   alfa <- Cipher(seqs)
   enc  <- encode(alfa, seqs)                 # encode as though amino acids
-  sva  <- align(enc, mysub, gapO, gapE)      # align using ClLustalW
+  sva  <- align(enc, mysub, gapO, gapE)      # align using ClustalW
   cons <- decode(alfa, sva$cons)             # decode the consensus sequence
   back <- decode(alfa, sva$alignedOriginal)  # decode the aligned sequences
   rack <- strsplit(back, "-")
