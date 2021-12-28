@@ -109,11 +109,11 @@ distances. We cut the dendrogam to cluster the sequences into 20 groups. The num
 arbitrary. In our data set, it should yield about 8 long-read break-point sequences per cluster.
 For later steps, we also want to make sure that each cluster contains at leeast 2 sequences.
 ```{r compute.distances}
-seqclust <- SequenceCluster(LR, NC = 20)
+seqclust <- SequenceCluster(LR0, NC = 20)
 table(seqclust@clusters)
 ```
 Now we see why 20 clusters is appropriate. Each cluster is a relatively small size, but they
-all contain more than one sequence so that aligning those sequences will be is meaningful.
+all contain more than one sequence so that aligning those sequences will be meaningful.
 **Figure 1** displays the resulting dendrogram, with each of the 20 clusters shown in a
 different color.
 ```{r fig01, fig.cap = "Figure 1: Hierarchical clustering of break point sequences.", fig.width = 12}
@@ -121,8 +121,8 @@ plot(seqclust)
 ```
 
 **Figure 2**  contains a simplified view of the same dendrogram, cutting off the clutter
-below the major splits into branches.
-```{r fig02, fig.width=8, fig.cap = "Figure 2: Uncluttered branches."}
+below the major splits into clusters.
+```{r fig02, fig.width=8, fig.cap = "Figure 2: Uncluttered clusters."}
 plot(seqclust, type = "clipped")
 ```
 
@@ -133,7 +133,7 @@ plot(seqclust, type = "unrooted")
 ```
 
 Both **Figure 2** and, more strongly, **Figure 3** indicate that there are approximately four
-major branches.
+major clusters.
 
 We can also show the dendrogram attached to a heatmap containing the distance matrix.
 
@@ -146,34 +146,20 @@ Each of the clusters uses a small enough set of symbols that we can safely rewri
 though they are sequences of amino acids. We then use the `align` function from the `SVAlignR`
 package to perform multiple sequence alignments, using the "ClustalW" algorithm on each cluster.
 Because the components are not amino acids, however, we do not need to use one of the PAM or
-BLOSUM matrices. Instead, we define a substiuttion matrix that gives the same match and mismatch
+BLOSUM matrices. Instead, we define a substitution matrix that gives the same match and mismatch
 scores to each pair of symbols.
 
 ```{r do.align}
 MYSUB <- makeSubsMatrix(match = 2, mismatch = -6)
-NK <- seqclust@NC
-typer <- seqclust@clusters
-
-consensus <- lapply(1:NK, function(K) {
-  alignBranch(LR[typer == K], mysub = MYSUB, gapO = 2, gapE = 0.1)
-})
-names(consensus) <- paste("C", c(rep("0", 9), rep("", 11)), 1:20, sep = "")
+consensus <- alignAllClusters(seqclust, mysub = MYSUB, gapO = 2, gapE = 0.1)
 class(consensus)
 length(consensus)
-```
-
-```{r echo=FALSE, eval=FALSE}
-all(names(weights) == names(seqclust@clusters))
-daft <- data.frame(weights, seqclust@clusters)
-daft[weights == 2,]
 ```
 
 **Figure 5** contains an example of a multiple sequence alignment.
 ```{r fig05 , fig.cap="Figure 5: Example alignment of cluster 15."}
 opar <- par(mai = c(1.02, 0.82, 0.82, 0.82))
-wt <- weights[colnames(consensus[[15]]$meet)]
-showme(consensus[[15]])
-mtext(paste("n =", wt), side = 4, line = 1, at = 1:length(wt), las=2)
+image(consensus[[15]])
 par(opar)
 rm(opar)
 ```
@@ -182,8 +168,8 @@ rm(opar)
 **Figure 6** shows all 20 alignments. 
 ```{r fig06, fig.cap="Figure 6: Multiple sequence alignments of clusters.", fig.width=20, fig.height=20}
 opar <- par(mfrow = c(4,3))
-for (K in 1:NK) {
-  showme(consensus[[K]], col = SVAlignR:::myColorSet[K])
+for (K in 1:length(consensus)) {
+  image(consensus[[K]], col = SVAlignR:::myColorSet[K])
 }
 par(opar)
 ```
@@ -191,7 +177,7 @@ par(opar)
 ## Consensus Sequences
 
 ```{r conseq, fig.cap="Alignment of all consensus sequences.", echo=FALSE, eval = FALSE}
-allmodcons <- sapply(consensus, function(X) X$cons)
+allmodcons <- sapply(consensus, function(X) X@consensus)
 allmodcons <- gsub("\\?", "q", allmodcons) # make question mark a letter
 allmodcons <- gsub("\\:", "z", allmodcons) # make rare colon a letter
 while (length(grep("^[qz]", allmodcons) > 0)) {
@@ -205,8 +191,8 @@ while (length(grep("[qz]$", allmodcons) > 0)) {
 names(allmodcons) <- paste("C", c(rep(0,9), rep("", 11)), 1:20, sep = "")
 
 newsub <- makeSubsMatrix(match = 2, mismatch = -6)
-ab <- alignBranch(allmodcons, mysub = newsub, gapO = 0.1, gapE = 0.2)
-showme(ab)
+ab <- alignCluster(allmodcons, mysub = newsub, gapO = 0.1, gapE = 0.2)
+image(ab)
 
 ```
 
@@ -220,7 +206,7 @@ hcd <- as.dendrogram(seqclust@hc)
 dend2 <- cut(hcd, h = mycut)
 DU <- dend2$upper
 blocks <- sapply(consensus, function(X) {
-  X$cons
+  X@consensus
 })
 labels(DU) <- paste("   [", 1:NC, "]  ",  blocks, "   ", sep = "")
 
@@ -228,7 +214,7 @@ opar <- par(bg = "gray90")
 plot(ape::as.phylo(DU), type = "unrooted", rotate.tree = -20,
      edge.color = "black", edge.width = 2,
      lab4ut = "axial", 
-     tip.color = myColorSet[1:NK], cex = 1.2)
+     tip.color = myColorSet[1:NC], cex = 1.2)
 par(opar)
 
 ```

@@ -10,8 +10,8 @@ try( makeSubsMatrix(mismatch = "13") )
 
 mysub <- makeSubsMatrix(match = 2, mismatch = -6)
 
-## test the 'alignBranch' method
-try( alignBranch(13) )
+## test the 'alignCluster' method
+try( alignCluster(13) )
 
-ab <- alignBranch(seqs, mysub)
-showme(ab)
+ab <- alignCluster(seqs, mysub)
+image(ab)

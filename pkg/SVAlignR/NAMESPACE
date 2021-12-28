@@ -3,8 +3,7 @@
 ###
 
 import("methods")
-importMethodsFrom("oompaBase", "plot")
-#importFrom("gdata", "read.xls")
+importMethodsFrom("oompaBase", "plot", "image")
 
 importFrom("graphics", "image", "mtext", "text")
 importFrom("grDevices", "topo.colors")
@@ -26,6 +25,10 @@ export("Cipher", "encode", "decode")
 
 ### SequenceClusters
 exportClass("SequenceCluster")
-export("SequenceCluster", "updateClusters", "heat", "makeSubsMatrix", "alignBranch", "showme")
-exportMethods("plot")
+export("SequenceCluster", "updateClusters", "heat")
+export("makeSubsMatrix", "alignCluster", "alignAllClusters")
+
+exportClass("AlignedCluster")
+
+exportMethods("plot", "image")
 

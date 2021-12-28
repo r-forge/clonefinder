@@ -1,4 +1,10 @@
 makeSubsMatrix <- function(match = 5, mismatch = -2) {
+  if (!is.numeric(match) | !is.numeric(mismatch)) {
+    stop("Both parameters must be numeric.\n")
+  }
+  if (length(match) != 1 | length(mismatch) != 1) {
+    stop("Both parametersm must be of length one.\n")
+  }
   lab <- c(LETTERS[c(-15, -21)], "*" )
   MYSUB <- matrix(mismatch, 25, 25, dimnames = list(lab, lab))
   diag(MYSUB) <- match
@@ -36,7 +42,14 @@ align <- function(sequences, mysub = NULL, gapO = 10, gapE = 0.2) {
        cons = xcons)
 }
 
-alignBranch <- function(sequences, mysub = NULL, gapO = 10, gapE = 0.2) {
+setClass("AlignedCluster",
+         slots = c(
+           alignment = "matrix",
+           weights = "integer",
+           consensus = "character")
+         )
+
+alignCluster <- function(sequences, mysub = NULL, gapO = 10, gapE = 0.2) {
   ## assume we have names on the individual sequences
   if (is.null(mysub)) mysub <- makeSubsMatrix
   seqs <- sequences[!duplicated(sequences)]  # dedup
@@ -46,12 +59,36 @@ alignBranch <- function(sequences, mysub = NULL, gapO = 10, gapE = 0.2) {
   cons <- decode(alfa, sva$cons)             # decode the consensus sequence
   back <- decode(alfa, sva$alignedOriginal)  # decode the aligned sequences
   rack <- strsplit(back, "-")
-  list(meet = as.matrix(as.data.frame( rack )), cons = cons)
+  new("AlignedCluster",
+      alignment = as.matrix(as.data.frame( rack )),
+      weights = integer(0),
+      consensus = cons)
 }
 
-showme <- function(twoparts, col = "black", cex = 1) {
-  meet <- twoparts$meet
-  cons <- unlist(strsplit(twoparts$cons, "-"))
+
+alignAllClusters <- function(sc, mysub = NULL, gapO = 10, gapE = 0.2) {
+  if (!inherits(sc, "SequenceCluster")) {
+    stop("Bad input, sc = ", class(sc), "\n")
+  }
+  if (is.null(mysub)) mysub <- makeSubsMatrix
+  NC <- sc@NC
+  result <- lapply(1:NC, function(K) {
+    ab <- alignCluster(sc@rawSequences[sc@clusters == K],
+                      mysub = mysub, gapO = gapO, gapE = gapE)
+    ab@weights <- sc@weights[colnames(ab@alignment)]
+    ab
+  })
+  nzero <- trunc(log10(1:NC))
+  pad <- sapply(max(nzero) - nzero, function(n) paste(rep("0", n), collapse = ""))
+  names(result) <- paste("B", pad, 1:NC, sep = "")
+  result
+}
+
+
+setMethod("image", "AlignedCluster",  function(x, col = "black", cex = 1, main = "", ...) {
+  meet <- x@alignment
+  wt <- x@weights
+  cons <- unlist(strsplit(x@consensus, "-"))
   matr <- matrix(1, nrow = nrow(meet), ncol = ncol(meet))
   matr[cons == "?", ] <- 2
   matr[!(cons %in% c("?", ":"))] <- 3
@@ -68,8 +105,8 @@ showme <- function(twoparts, col = "black", cex = 1) {
                    ifelse(ncol(meet) > 22, 0.5, 0.7), 1)
   mtext(colnames(meet), side = 2, las = 2, at = 1:ncol(meet), line = 0.5,
         col = col, cex = txtcex)
-  invisible(meet)
-}
-
-analyzeMotif <- function() {
-}
+  if (length(wt) == ncol(meet)) {
+    mtext(paste("n=", wt, sep = ""), side = 4, line = 1/2, at = 1:length(wt), las=2)
+  }
+  invisible(x)
+})

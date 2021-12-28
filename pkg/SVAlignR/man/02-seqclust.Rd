@@ -18,7 +18,7 @@ returns a new object of the \code{SequenceCluster} class.
 }
 \usage{
 SequenceCluster(rawseq, method = c("needelman", "levenshtein"), NC = 5)
-\S4method{plot}{SequenceCluster,missing}(x, type = "rooted", \dots)
+\S4method{plot}{SequenceCluster,missing}(x, type = "rooted", main = "Colored Clusters", \dots)
 updateClusters(sc, NC)
 heat(x, \dots)
 }
@@ -31,9 +31,10 @@ heat(x, \dots)
     Needelman-Wunsch global alignment algorithm.}
   \item{x}{An object of the \code{SequenceCluster} class.}
   \item{sc}{An object of the \code{SequenceCluster} class.}
-  \item{NC}{An integer; the number of branches/clusters to cut from the dendrogram.}
+  \item{NC}{An integer; the number of clusters to cut from the dendrogram.}
   \item{type}{A character strnig; the type of lpot to make. Val;id types
     are "rooted", "clippe", or "unrooted".}
+  \item{main}{Character; the plot title.}
   \item{\dots}{extra arguments for generic or plotting routines}
 }
 \section{Slots}{
@@ -42,9 +43,11 @@ heat(x, \dots)
 	algorithm was used.}
       \item{rawSequences}{A character vector that contains the input words or "sequences"
 	tthat were clustered.}
+      \item{weights}{A numeric vactor; the numbof times each unique raw
+	sequence occurs.}
       \item{\code{distance}:}{A \code{dist} object.}
       \item{\code{hc}:}{An \code{hclust} object.}
-      \item{\code{NC}:}{An integer; the number of branches/clusters to cut from the dendrogram.}
+      \item{\code{NC}:}{An integer; the number of to cut from the dendrogram.}
       \item{\code{clusters}:}{An integer vector containng cluster assignments.}
   }
 }

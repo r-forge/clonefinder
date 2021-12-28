@@ -7,6 +7,7 @@ setClass("SequenceCluster",
          slots = c(
            method = "character",
            rawSequences = "character",
+           weights = "numeric",
            distance = "dist",
            hc = "hclust",
            NC = "numeric",
@@ -38,6 +39,7 @@ SequenceCluster <- function(rawseq, method = c("needelman", "levenshtein"), NC =
     }
     as.dist(mat)
   }
+  
   ## Make sure everything is named
   if (is.null(names(rawseq))) {
     warning("Adding names to input sequences.")
@@ -50,8 +52,13 @@ SequenceCluster <- function(rawseq, method = c("needelman", "levenshtein"), NC =
   ## dedup
   if (any(dup <- duplicated(rawseq))) {
     warning("Removing ", sum(dup), " duplicated sequences.\n")
-    rawseq <- rawseq[!dup]
+    dedup <- rawseq[!dup]
+    weights <- sapply(dedup, function(lr) sum(rawseq == lr))
+    rawseq <- dedup
+  } else  {
+    weights <- rep(1, length(rawseq))
   }
+  names(weights) <- names(rawseq)
 
   ## encode the input sequences
   alphabet <- Cipher(rawseq)
@@ -60,13 +67,14 @@ SequenceCluster <- function(rawseq, method = c("needelman", "levenshtein"), NC =
   symm <- switch(method,
                  needelman = doNeedelman(encoded),
                  levenshtein = doLevenshtein(encoded),
-                 stop("Method |", method, "| does not match any known methods." )
+                 stop("Method '", method, "' does not match any known methods." )
                  )
   hc <- hclust(symm, "ward.D2")
   clust <- cutree(hc, k = NC)
   new("SequenceCluster",
       method = method,
       rawSequences = rawseq,
+      weights = weights,
       distance = symm,
       hc = hc,
       NC = NC,
@@ -88,7 +96,7 @@ myColorSet <- c("cornflowerblue", "hotpink2", "green4", "red",
                 "orchid", "tan4", "midnightblue", "firebrick")
 
 setMethod("plot", signature("SequenceCluster", "missing"),
-function(x, type = "rooted", ...) {
+function(x, type = "rooted", main = "Colored Clusters", ...) {
   plotRooted <- function(x, NC = x@NC, ...) {
 ##    cat("rooted\n", file = stderr())
     hcd <- as.dendrogram(x@hc)
@@ -96,7 +104,7 @@ function(x, type = "rooted", ...) {
       set("branches_k_color", value = myColorSet[1:NC], k = NC) %>%
       set("branches_lwd", 2) %>% 
       set("labels_cex", 0.7) %>%
-      plot(main = "Colored clusters")
+      plot(main = main)
   }
   plotClipped <- function(x, NC, ...) {
  ##   cat("clipped\n", file = stderr())
@@ -107,7 +115,7 @@ function(x, type = "rooted", ...) {
       set("branches_k_color", value = myColorSet[1:NC], k = NC) %>%
       set("branches_lwd", 2) %>% 
       set("labels_cex", 1.3) %>%
-      plot(main = "Colored clusters")
+      plot(main = main)
   }
   plotUnrooted <- function(x, NC, ...) {
  ##   cat("unrooted\n", file = stderr())

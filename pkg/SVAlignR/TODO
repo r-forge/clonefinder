@@ -1,6 +1,10 @@
 * Update the SequenceCluster man page to give a more complete
- description of visualization code.
+  description of visualization code.
 * Decide whether to convert "heat" to a generic function called
- "heatmap".
-* Decide on a class structure for the rtesults of aligning branches.
- Possibly inherited from SequenceCluster.
+  "heatmap".
+* Design and implement a reasonable interface to cluster and plot an
+  alignment of the different conses=nsus sequences.
+* Design and implement a reasonable interface to add differnt labels
+  (such as individual consensus sequences) to the "unrooted" phylo plots.
+
+
