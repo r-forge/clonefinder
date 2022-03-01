@@ -45,7 +45,7 @@ align <- function(sequences, mysub = NULL, gapO = 10, gapE = 0.2) {
 setClass("AlignedCluster",
          slots = c(
            alignment = "matrix",
-           weights = "integer",
+           weights = "numeric",
            consensus = "character")
          )
 
@@ -98,7 +98,12 @@ setMethod("image", "AlignedCluster",  function(x, col = "black", cex = 1, main =
   for (i in 1:nrow(meet)) {
     text(i, 1:ncol(meet), meet[i,], cex = cex)
   }
-  tag <- apply(meet, 1, function(x) names(which.max(table(x))))
+  tag <- apply(meet, 1, function(x) {
+    x <- x[!(x %in% c(":", "x"))]
+    val <- names(which.max(table(x)))
+    if(is.null(val)) val <- ":"
+    val
+  })
   tagcex <- ifelse(nrow(meet) > 20, 0.8, 1)
   mtext(tag, side = 3, line = 1, at = 1:nrow(matr), col = col, cex = tagcex)
   txtcex <- ifelse(ncol(meet) > 15, 

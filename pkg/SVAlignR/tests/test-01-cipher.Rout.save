@@ -65,7 +65,7 @@ Error in Cipher(motif, extras = c(x = 26)) :
 +                  collapse = "-")
 > try( beta <- Cipher(toolong) )
 Error in Cipher(toolong) : 
-  We can only handle codes with at most 70 letters.
+  We can only handle codes with at most 68 letters.
 
 > 
 > odd <- c(motif, "0-0-50-74-61")

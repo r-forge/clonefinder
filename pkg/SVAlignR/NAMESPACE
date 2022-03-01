@@ -8,7 +8,7 @@ importMethodsFrom("oompaBase", "plot", "image")
 importFrom("graphics", "image", "mtext", "text")
 importFrom("grDevices", "topo.colors")
 importFrom("stats", "hclust", "as.dendrogram", "as.dist", "cutree", "heatmap")
-importFrom("utils", "adist")
+importFrom("utils", "adist", "write.csv")
 
 ### Computational models
 importFrom("NameNeedle", "needleScores", "defaultNeedleParams")
@@ -18,6 +18,11 @@ importFrom("Biostrings", "AAStringSet")
 ### graphing
 importFrom("dendextend", "set", "%>%")
 importFrom("ape", "as.phylo")
+importFrom("Polychrome", "createPalette")
+importFrom("igraph", "graph_from_edgelist", "set_vertex_attr", "vertex_attr",
+           "set_edge_attr")
+importFrom("stringr", "str_count")
+importFrom("colorspace", "hex2RGB")
 
 ### Exports
 exportClass("Cipher")
@@ -32,3 +37,6 @@ exportClass("AlignedCluster")
 
 exportMethods("plot", "image")
 
+### StringGraphs
+exportClass("StringGraph")
+export("MotifGraph", "DecompositionGraph", "exportSG")

@@ -1,13 +1,13 @@
 Package: SVAlignR
-Version: 0.1.2
-Date: 2021-12-27
+Version: 0.2.0
+Date: 2022-03-01
 Title: Recovering Structure of Long Molecules from Structural Variation Data
 Author: Kevin R. Coombes
 Maintainer: Kevin R. Coombes <krc@silicovore.com>
 Description: Implements a method to combine multiple levels of multiple
   sequence alignment to uncover the structure of complex DNA rearrangements.
 Depends: R (>= 3.5.0)
-Imports: methods, graphics, grDevices, oompaBase, msa, Biostrings, NameNeedle, dendextend, ape
+Imports: methods, graphics, grDevices, oompaBase, msa, Biostrings, NameNeedle, dendextend, ape, stringr, igraph, Polychrome, colorspace
 Suggests: viridisLite, knitr, rmarkdown
 VignetteBuilder: knitr
 License: Apache License (== 2.0)
