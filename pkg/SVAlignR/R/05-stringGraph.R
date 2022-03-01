@@ -93,8 +93,8 @@ makeEdges <- function(A, B, debug = FALSE) {
   X <- as.matrix(edgelist[, 1:2])
   M <- graph_from_edgelist(X, directed = TRUE)
   N <- vertex_attr(M, "name")
-  if (length(N) != nrow(nodelist)) {
-    stop("Disagreement in number of nodes")
+  if (length(N) < nrow(nodelist)) {
+    warning("Some nodes have no edges.")
   }
   LL <- 1 + str_count(N, "\\-")
   M <- set_vertex_attr(M, "shape", value = "vrectangle")
@@ -137,7 +137,7 @@ MotifGraph <- function(motifNodes, alfa, name = "motif") {
 .makeNodesFromDecomp <- function(edgelist, motifNodes) {
   temp <- unique(c(edgelist[,1], edgelist[,2]))
   nodeList2 <- data.frame(Names = temp,
-                          Type = factor(rep(c("LRBP", "Motif"), times = length(temp)/2)),
+                          Type = "LRBP",
                           Color = "#C0C0C0",
                           txtColor = "black")
   rownames(nodeList2) <- nodeList2[,"Names"]
