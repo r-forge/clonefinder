@@ -26,11 +26,11 @@ generateSimulationSet <- function(simPath, dataPath, nPerK, rounds = 400, nu = 0
     go <- FALSE
     while (go == FALSE) {
       tumor <- try(Tumor(psis[j,], rounds, nu, pcnv, norm.contam), silent = TRUE)
-      if (class(tumor) != 'try-error') {
+      if (!inherits(tumor, 'try-error')) {
         data <- generateTumorData(tumor,  dataPars$snps.seq,  dataPars$snps.cgh,  dataPars$mu, dataPars$sigma.reads,
                         dataPars$sigma0.lrr, dataPars$sigma0.baf, dataPars$density.sigma)
       }
-      if (class(tumor)!='try-error' & class(data)!='try-error') {
+      if (!inherits(tumor, 'try-error') & !inherits(data, 'try-error')) {
         go <- TRUE
       }
     }
