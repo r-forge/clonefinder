@@ -3,8 +3,10 @@
 * Decide whether to convert "heat" to a generic function called
   "heatmap".
 * Design and implement a reasonable interface to cluster and plot an
-  alignment of the different conses=nsus sequences.
-* Design and implement a reasonable interface to add differnt labels
+  alignment of the different consensus sequences.
+* Design and implement a reasonable interface to add different labels
   (such as individual consensus sequences) to the "unrooted" phylo plots.
+* Update the man page for `exportSG` to describe what it exports more
+  completely.
 
 
