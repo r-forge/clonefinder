@@ -40,3 +40,5 @@ exportMethods("plot", "image")
 ### StringGraphs
 exportClass("StringGraph")
 export("MotifGraph", "DecompositionGraph", "exportSG")
+
+## KMers

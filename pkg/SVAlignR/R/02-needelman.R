@@ -98,21 +98,25 @@ myColorSet <- c("cornflowerblue", "hotpink2", "green4", "red",
 setMethod("plot", signature("SequenceCluster", "missing"),
 function(x, type = "rooted", main = "Colored Clusters", ...) {
   plotRooted <- function(x, NC = x@NC, ...) {
-##    cat("rooted\n", file = stderr())
+    ##    cat("rooted\n", file = stderr())
+    groups <- unique(cutree(x@hc, k = NC)[x@hc$order])
+    colsch <- myColorSet[groups]
     hcd <- as.dendrogram(x@hc)
-    hcd %>% set("labels_col", value = myColorSet[1:NC], k = NC) %>% 
-      set("branches_k_color", value = myColorSet[1:NC], k = NC) %>%
+    hcd %>% set("labels_col", value = colsch, k = NC) %>% 
+      set("branches_k_color", value = colsch, k = NC) %>%
       set("branches_lwd", 2) %>% 
       set("labels_cex", 0.7) %>%
       plot(main = main)
   }
   plotClipped <- function(x, NC, ...) {
  ##   cat("clipped\n", file = stderr())
+    groups <- unique(cutree(x@hc, k = NC)[x@hc$order])
+    colsch <- myColorSet[groups]
     mycut <- mean(rev(x@hc$height)[NC + -1:0])
     hcd <- as.dendrogram(x@hc)
     dend2 <- cut(hcd, h = mycut)
-    dend2$upper %>% set("labels_col", value = myColorSet[1:NC], k = NC) %>% 
-      set("branches_k_color", value = myColorSet[1:NC], k = NC) %>%
+    dend2$upper %>% set("labels_col", value = colsch, k = NC) %>% 
+      set("branches_k_color", value = colsch, k = NC) %>%
       set("branches_lwd", 2) %>% 
       set("labels_cex", 1.3) %>%
       plot(main = main)

@@ -20,7 +20,7 @@ makeSubsMatrix <- function(match = 5, mismatch = -2) {
 ###    aligned = results of an alignment algorithm
 ###    alignedOriginal = results translated back to starting alphabet
 align <- function(sequences, mysub = NULL, gapO = 10, gapE = 0.2) {
-  if (is.null(mysub)) mysub <- makeSubsMatrix
+  if (is.null(mysub)) mysub <- makeSubsMatrix()
   U2 <- sort(unique(unlist(strsplit(sequences, ""))))
   if (length(U2) > 25) {
     stop("Cannot handle an alphabet with more than 25 letter!")
@@ -51,7 +51,7 @@ setClass("AlignedCluster",
 
 alignCluster <- function(sequences, mysub = NULL, gapO = 10, gapE = 0.2) {
   ## assume we have names on the individual sequences
-  if (is.null(mysub)) mysub <- makeSubsMatrix
+  if (is.null(mysub)) mysub <- makeSubsMatrix()
   seqs <- sequences[!duplicated(sequences)]  # dedup
   alfa <- Cipher(seqs)
   enc  <- encode(alfa, seqs)                 # encode as though amino acids
@@ -70,7 +70,7 @@ alignAllClusters <- function(sc, mysub = NULL, gapO = 10, gapE = 0.2) {
   if (!inherits(sc, "SequenceCluster")) {
     stop("Bad input, sc = ", class(sc), "\n")
   }
-  if (is.null(mysub)) mysub <- makeSubsMatrix
+  if (is.null(mysub)) mysub <- makeSubsMatrix()
   NC <- sc@NC
   result <- lapply(1:NC, function(K) {
     ab <- alignCluster(sc@rawSequences[sc@clusters == K],

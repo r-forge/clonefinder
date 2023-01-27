@@ -9,7 +9,7 @@ setClass("Cipher",
 Cipher <- function(sampleText, split = "-", extras = c("-" = ":", "?" = "?")) {
   shatter <- strsplit(sampleText, split) # decompose into lists of symbols
   U <- sort(unique(unlist(shatter))) # find the unique symbols
-  base <- c(LETTERS[-c(15,21)], letters, 1:9, 0, "!", "@", "#", "$", "%", "^", "&", "|")
+  base <- c(LETTERS[-c(10,24)], letters, 1:9, 0, "!", "@", "#", "$", "%", "^", "&", "|")
   if (length(U) > length(base)) {
     stop("We can only handle codes with at most ", length(base), " letters.\n")
   }
