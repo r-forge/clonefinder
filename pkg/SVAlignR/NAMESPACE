@@ -42,3 +42,4 @@ exportClass("StringGraph")
 export("MotifGraph", "DecompositionGraph", "exportSG")
 
 ## KMers
+export(makeWords, countWords, plotWords)
