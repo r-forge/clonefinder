@@ -8,7 +8,7 @@
 
 \title{Class \code{"SequenceCluster"}}
 \description{
-The \code{SequenceCluster} class is used to cluster seqeunces of "words"
+The \code{SequenceCluster} class is used to cluster sequences of "words"
 from an arbitrarily long alphabet. The \code{SequenceCluster} function
 returns a new object of the \code{SequenceCluster} class.
 }
@@ -32,8 +32,8 @@ heat(x, \dots)
   \item{x}{An object of the \code{SequenceCluster} class.}
   \item{sc}{An object of the \code{SequenceCluster} class.}
   \item{NC}{An integer; the number of clusters to cut from the dendrogram.}
-  \item{type}{A character strnig; the type of lpot to make. Val;id types
-    are "rooted", "clippe", or "unrooted".}
+  \item{type}{A character strnig; the type of plot to make. Valid types
+    are "rooted", "clipped", or "unrooted".}
   \item{main}{Character; the plot title.}
   \item{\dots}{extra arguments for generic or plotting routines}
 }
@@ -47,8 +47,8 @@ heat(x, \dots)
 	sequence occurs.}
       \item{\code{distance}:}{A \code{dist} object.}
       \item{\code{hc}:}{An \code{hclust} object.}
-      \item{\code{NC}:}{An integer; the number of to cut from the dendrogram.}
-      \item{\code{clusters}:}{An integer vector containng cluster assignments.}
+      \item{\code{NC}:}{An integer; the number of clusters cut from the dendrogram.}
+      \item{\code{clusters}:}{An integer vector containing cluster assignments.}
   }
 }
 \value{

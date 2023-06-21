@@ -1,4 +1,4 @@
-\name{SVAkignR-data}
+\name{SVAlignR-data}
 \alias{SVAlignR-data}
 \alias{longreads}
 \alias{breakpoints}
@@ -6,7 +6,7 @@
 \title{SVAlignR Sample Data}
 \description{
   These data sets contain binary versions of data describing breakpoints
-  and long read sequences from an HPV-positive head-and-neck cancer.
+  and long read sequences from an HPV-positive head-and-neck cancer sample.
 }
 \usage{
 data("longreads")
@@ -16,11 +16,11 @@ data("longreads")
     \item{\code{longreads}}{A data frame with 197 rows and 5 columns.
       Each row represents a single Oxford Nanopore long read from a study
       of a cell line from an HPV-positive head-and-neck squamous cell
-      tumor. The five columns contain (i) a uniqie identifier of each
+      tumor. The five columns contain (i) a unique identifier of each
       long read, (ii) the length of the read, in bytes, (iii) the
       ordered sequence of break points, represented as a hyphen
       separated list of numeric identifiers, (iv) manually estimated
-      natural groups of reads, and (v) a manual curated indication of
+      natural groups of reads, and (v) a manually curated indication of
       whether certain long reads should be omitted from the analysis.
     }
     \item{\code{breakpoints}}{A data frame with 82 rows and 11 columns.

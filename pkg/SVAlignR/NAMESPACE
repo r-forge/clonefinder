@@ -5,9 +5,11 @@
 import("methods")
 importMethodsFrom("oompaBase", "plot", "image")
 
-importFrom("graphics", "image", "mtext", "text")
+importFrom("graphics", "image", "mtext", "text", "abline")
 importFrom("grDevices", "topo.colors")
-importFrom("stats", "hclust", "as.dendrogram", "as.dist", "cutree", "heatmap")
+importFrom("stats", "aggregate",
+           "hclust", "as.dendrogram",
+           "as.dist", "cutree", "heatmap")
 importFrom("utils", "adist", "write.csv")
 
 ### Computational models

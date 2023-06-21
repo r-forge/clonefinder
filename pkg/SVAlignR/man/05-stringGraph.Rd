@@ -9,11 +9,11 @@
 
 \title{Class \code{"StringGraph"}}
 \description{
-The \code{StringGraph} class is used to represent graphs relating
-strings that arise from strings reprsenting long-read breakpoint
-sequences. The basic examples are: (1) "Motif Graphs" where the edges
-are subtring relations, and (2) "Decomposition Graphs" where the edges
-are restricted subtring relations that decompose a long read.
+The \code{StringGraph} class is used to represent graphs that arise from
+strings reprsenting long-read breakpoint sequences. The basic examples
+are: (1) "Motif Graphs" where the edges are subtring relations, and (2)
+"Decomposition Graphs" where the edges are restricted subtring relations
+that decompose a long read.
 }
 \section{Objects from the Class}{
   Objects should be defined using the \code{MotifGraph} or
@@ -33,7 +33,7 @@ exportSG(sg)
     nodes of length L.}
   \item{alfa}{A \code{Cipher} object.}
   \item{name}{A character vector of length one.}
-  \item{decomp}{A decomposito object; see details.}
+  \item{decomp}{A decomposition object; see details.}
   \item{sg}{An object of the \code{StringGraph} class.}
   \item{x}{An object of the \code{StringGraph} class.}
   \item{y}{Anything; it is ignored.}
@@ -46,13 +46,14 @@ exportSG(sg)
       \item{\code{nodelist}:}{A matrix representing the nodes of the
 	graph, along with their properties.}
       \item{\code{graph}:}{An \code{igraph} object.}
-      \item{\code{layout}:}{A matrix containng x-y locations for the nodes.}
+      \item{\code{layout}:}{A matrix containing x-y locations for the nodes.}
   }
 }
 \value{
 The \code{MotifGraph} and \code{DecompositionGraph} functions return a
 new object of the \code{StringGraph} class. The \code{plot} method and
-\code{exportSG} function nothing and are called for their side effects. 
+\code{exportSG} functions return nothing and are called for their side
+effects.
 }
 \author{Kevin R. Coombes <krc@silicovore.com>}
 \note{

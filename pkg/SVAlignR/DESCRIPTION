@@ -1,6 +1,6 @@
 Package: SVAlignR
-Version: 0.3.3
-Date: 2023-02-01
+Version: 0.3.4
+Date: 2023-06-20
 Title: Recovering Structure of Long Molecules from Structural Variation Data
 Author: Kevin R. Coombes
 Maintainer: Kevin R. Coombes <krc@silicovore.com>

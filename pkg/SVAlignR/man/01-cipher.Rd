@@ -8,14 +8,14 @@
 \title{Class \code{"Cipher"}}
 \description{
 The \code{Cipher} class is used to change between different alphabets
-(and so behaves as a simple substituion cipher). The \code{Cipher} function
-returns a new object of the \code{Cipher} class.
+(and so behaves as a simple substitution cipher). The \code{Cipher} function
+creates a new object of the \code{Cipher} class.
 }
 \section{Objects from the Class}{
   Objects should be defined using the \code{Cipher} constructor. You
   typically pass in a character vector of "words" that contain all the
-  symbols that are contained in the text to translated (i.e., encoded
-  and decoded) between languages. A standard tqarget alphabet is created
+  symbols that are contained in the text to be translated (i.e., encoded
+  and decoded) between languages. A standard target alphabet is created
   along with forward and reverse transliteration rules.
 }
 \usage{

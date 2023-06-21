@@ -8,11 +8,14 @@
 
 \title{Class \code{"AlignedCluster"}}
 \description{
-The \code{AlignedCluster} class is used to a;ign a set of clustered
-seqeunces. The \code{alignClusters} function returns a new object of the
+The \code{AlignedCluster} class is used to align a set of clustered
+sequences. The \code{alignClusters} function creates a new object of the
 \code{AlignedCluster} class. The \code{alignAllClusters} function takes
 a \code{SequenceCluster} object and returns a list of
-\code{AlignedCluster} objects.
+\code{AlignedCluster} objects. Clustering is performed using the
+ClustalW algorithm. The associated class and fuinctions take care of
+encoding and decoding sequences into a form that can be used by the
+implementation of ClustalW in the \code{msa} package.
 }
 \section{Objects from the Class}{
   Objects should be defined using the \code{alignCluster} or
@@ -28,7 +31,7 @@ makeSubsMatrix(match = 5, mismatch = -2)
 \arguments{
   \item{sequences}{A character vector that contains all sequences
     to be aligned.}
-  \item{mysub}{A square (usually symmetric) substituion matrix.}
+  \item{mysub}{A square (usually symmetric) substitution matrix.}
   \item{gapO}{A numeric value defining the penalty for opening a gap.}
   \item{gapE}{A numeric value defining the penalty for extending a gap.}
   \item{sc}{An object of the \code{SequenceCluster} class.}
@@ -45,15 +48,17 @@ makeSubsMatrix(match = 5, mismatch = -2)
 }
 \section{Slots}{
   \describe{
-      \item{\code{alignment}:}{.}
+      \item{\code{alignment}:}{A matrix of aligned sequences; rows are
+	sequences and columns are aligned positions..}
       \item{weights}{A numeric vactor; the numbof times each unique raw
 	sequence occurs.}
-      \item{\code{consensus}:}{.}
+      \item{\code{consensus}:}{A character vector; the consensus
+	sequence of a successful alignment.}
   }
 }
 \value{
 The \code{alignCluster} function returns a new object of the \code{AlignedCluster}
-class. The \code{alignAlllClusters} function returns a list of
+class. The \code{alignAllClusters} function returns a list of
 \code{AlignedCluster} objects. The \code{makeSubMatrix} function returns
 a symmetric substitution matrix.
 }
