@@ -1,6 +1,6 @@
 
-R version 4.1.0 (2021-05-18) -- "Camp Pontanezen"
-Copyright (C) 2021 The R Foundation for Statistical Computing
+R version 4.3.1 (2023-06-16 ucrt) -- "Beagle Scouts"
+Copyright (C) 2023 The R Foundation for Statistical Computing
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -61,11 +61,12 @@ Error in Cipher(motif, extras = c(x = 26)) :
 
 > 
 > toolong <- paste(c(LETTERS, letters, 0:9,
-+                    "!","@","#", "$", "%", "^", "&", "*", "(", ")"),
++                    "!","@","#", "$", "%", "^", "&", "*", "(", ")",
++                    "_", ";", "/", "," ),
 +                  collapse = "-")
 > try( beta <- Cipher(toolong) )
 Error in Cipher(toolong) : 
-  We can only handle codes with at most 68 letters.
+  We can only handle codes with at most 72 letters.
 
 > 
 > odd <- c(motif, "0-0-50-74-61")
@@ -79,4 +80,4 @@ Error in strsplit(txt, split) : non-character argument
 > 
 > proc.time()
    user  system elapsed 
-   1.95    0.21    2.18 
+   2.15    0.18    2.42 

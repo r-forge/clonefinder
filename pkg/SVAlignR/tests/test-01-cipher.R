@@ -19,7 +19,8 @@ try( Cipher(motif, extras = c(A = "zero")) )
 try( Cipher(motif, extras = c("x" = 26)) )
 
 toolong <- paste(c(LETTERS, letters, 0:9,
-                   "!","@","#", "$", "%", "^", "&", "*", "(", ")"),
+                   "!","@","#", "$", "%", "^", "&", "*", "(", ")",
+                   "_", ";", "/", "," ),
                  collapse = "-")
 try( beta <- Cipher(toolong) )
 
