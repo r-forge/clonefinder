@@ -21,8 +21,8 @@ importFrom("Biostrings", "AAStringSet")
 importFrom("dendextend", "set", "%>%")
 importFrom("ape", "as.phylo")
 importFrom("Polychrome", "createPalette")
-importFrom("igraph", "graph_from_edgelist", "set_vertex_attr", "vertex_attr",
-           "set_edge_attr")
+importFrom("igraph", "graph_from_edgelist", "graph_from_adjacency_matrix",
+           "set_vertex_attr", "vertex_attr", "set_edge_attr", "edge_attr")
 importFrom("stringr", "str_count")
 importFrom("colorspace", "hex2RGB")
 
@@ -49,3 +49,7 @@ export(makeWords, countWords, plotWords)
 ### Breakpoints
 exportClass("Breakpoints")
 export("Breakpoints")
+
+### De Bruijn Graphs
+exportClass("DeBruijn")
+export("deBruijn")
