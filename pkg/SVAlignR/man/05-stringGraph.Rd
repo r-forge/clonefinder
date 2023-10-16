@@ -60,6 +60,4 @@ effects.
 Attempting to manipulate a \code{StringGraph} object using text containing
 NAs, missing values, or previously unknown symbols will result in an error.
 }
-\examples{
-}
 \keyword{ math }

@@ -13,14 +13,14 @@ sequences. The \code{alignClusters} function creates a new object of the
 \code{AlignedCluster} class. The \code{alignAllClusters} function takes
 a \code{SequenceCluster} object and returns a list of
 \code{AlignedCluster} objects. Clustering is performed using the
-ClustalW algorithm. The associated class and fuinctions take care of
+ClustalW algorithm. The associated class and functions take care of
 encoding and decoding sequences into a form that can be used by the
 implementation of ClustalW in the \code{msa} package.
 }
 \section{Objects from the Class}{
   Objects should be defined using the \code{alignCluster} or
   \code{alignAllCluster} functions. You typically pass in a character
-  vector of sequences that have already been found to forma  cluster.
+  vector of sequences that have already been found to form a cluster.
 }
 \usage{
 alignCluster(sequences, mysub = NULL, gapO = 10, gapE = 0.2)
@@ -55,6 +55,17 @@ makeSubsMatrix(match = 5, mismatch = -2)
       \item{\code{consensus}:}{A character vector; the consensus
 	sequence of a successful alignment.}
   }
+}
+\section{Details}{
+  Alignment is performed using the implementation of the \code{ClustalW}
+  algorithm provided by the \code{msa} package. The existing code to align
+  amino-acid protein sequences is used by converting the current alphabet
+  to one that limits its use to the known amino acids. The decision to
+  ue this method introduces a limitation: we are unable to align any set
+  of seqeunces that use more than 25 distinct symbols. Attempting such
+  an alignment will result in the \code{alignCluster} function returning
+  a \code{NULL} value, which is passed on as one of the list items from
+  \code{alignAllClusters}.
 }
 \value{
 The \code{alignCluster} function returns a new object of the \code{AlignedCluster}

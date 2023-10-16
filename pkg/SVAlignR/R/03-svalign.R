@@ -55,7 +55,11 @@ alignCluster <- function(sequences, mysub = NULL, gapO = 10, gapE = 0.2) {
   seqs <- sequences[!duplicated(sequences)]  # dedup
   alfa <- Cipher(seqs)
   enc  <- encode(alfa, seqs)                 # encode as though amino acids
-  sva  <- align(enc, mysub, gapO, gapE)      # align using ClustalW
+  sva  <- try(align(enc, mysub, gapO, gapE), silent = TRUE) # align using ClustalW
+  if (inherits(sva, "try-error")) {
+    warning("Alphabet exceeds 25 characters.")
+    return(NULL)
+  }
   cons <- decode(alfa, sva$cons)             # decode the consensus sequence
   back <- decode(alfa, sva$alignedOriginal)  # decode the aligned sequences
   rack <- strsplit(back, "-")
@@ -74,8 +78,10 @@ alignAllClusters <- function(sc, mysub = NULL, gapO = 10, gapE = 0.2) {
   NC <- sc@NC
   result <- lapply(1:NC, function(K) {
     ab <- alignCluster(sc@rawSequences[sc@clusters == K],
-                      mysub = mysub, gapO = gapO, gapE = gapE)
-    ab@weights <- sc@weights[colnames(ab@alignment)]
+                       mysub = mysub, gapO = gapO, gapE = gapE)
+    if (!is.null(ab)) {
+      ab@weights <- sc@weights[colnames(ab@alignment)]
+    }
     ab
   })
   nzero <- trunc(log10(1:NC))

@@ -109,7 +109,7 @@ distances. We cut the dendrogam to cluster the sequences into 20 groups. The num
 arbitrary. In our data set, it should yield about 8 long-read break-point sequences per cluster.
 For later steps, we also want to make sure that each cluster contains at leeast 2 sequences.
 ```{r compute.distances}
-seqclust <- SequenceCluster(LR0, NC = 20)
+seqclust <- SequenceCluster(LR0, NC = 15)
 table(seqclust@clusters)
 ```
 Now we see why 20 clusters is appropriate. Each cluster is a relatively small size, but they
@@ -228,6 +228,50 @@ for (K in 1:NK) {
   showme(temp, col = SVAlignR:::myColorSet[K], cex = 0.5)
   dev.off()
 }
+```
+
+# De Bruijn Graphs
+We also provide the ability to compute de Bruijn graphs from any set of sequences. These graphs are
+frequently used for "de novo" sequencing, and thus can provide an alternative source of information
+about "consensus sequence" alignments. In order to work with graphs in general, you should load the
+`igraph` package. 
+
+```{r deBruijn}
+library("igraph")
+DB <- deBruijn(seqclust@rawSequences, 4)
+G <- DB@G
+loci <- layout_with_fr(G)
+plot(G, layout = loci)
+
+
+count_components(G)
+comp <- components(G)
+sort(comp$csize)
+
+GC <- largest_component(G)
+gloc <- layout_with_gem(GC)
+plot(GC, layout = gloc)
+
+sort(table(E(GC)$weight))
+GE <- delete_edges(GC, E(GC)[E(GC)$weight  < 6])
+GE <- largest_component(GE)
+#GE <- set_edge_attr(GE, "width", value = sqrt(edge_attr(G, "weight")))
+gloc <- layout_with_fr(GE)
+plot(GE, layout = gloc)
+```
+
+```{r debruijn sets}
+dbset <- lapply(1:seqclust@NC, function(J) {
+  rs <- seqclust@rawSequences[seqclust@clusters == J]
+  db <- deBruijn(rs, 4)
+}) 
+L <- length(dbset)
+for (I in 1:L) {
+  G <- dbset[[I]]@G
+  lyt <- layout_with_fr(G)
+  plot(G, layout =lyt, main = paste("Cluster", I))
+}
+
 ```
 
 # Appendix
