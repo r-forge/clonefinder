@@ -24,7 +24,7 @@ that decompose a long read.
 \usage{
 MotifGraph(motifNodes, alfa, name = "motif")
 DecompositionGraph(decomp, alfa, motifNodes, name = "decomp")
-exportSG(sg)
+exportSG(sg, outdir = ".")
 \S4method{plot}{StringGraph,ANY}(x, y, \dots)
 }
 \arguments{
@@ -35,6 +35,7 @@ exportSG(sg)
   \item{name}{A character vector of length one.}
   \item{decomp}{A decomposition object; see details.}
   \item{sg}{An object of the \code{StringGraph} class.}
+  \item{outdir}{A chara cter string, the name of the output directory.}
   \item{x}{An object of the \code{StringGraph} class.}
   \item{y}{Anything; it is ignored.}
   \item{\dots}{Extra graphical parameters.}

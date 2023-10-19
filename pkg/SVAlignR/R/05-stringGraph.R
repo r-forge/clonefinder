@@ -13,12 +13,12 @@ setMethod("plot", "StringGraph", function(x,y, ...) {
 })
 
 
-exportSG <- function(sg) {
+exportSG <- function(sg, outdir = ".") {
   if (!inherits(sg, "StringGraph")) {
     stop("Wrong object type.\n")
   }
-  fileedge <- paste(sg@name, "edgelist.csv", sep = "-")
-  filenode <- paste(sg@name, "nodelist.csv", sep = "-")
+  fileedge <- file.path(outdir, paste(sg@name, "edgelist.csv", sep = "-"))
+  filenode <- file.path(outdir, paste(sg@name, "nodelist.csv", sep = "-"))
   write.csv(sg@edgelist, file = fileedge, row.names = FALSE)
   temp <- data.frame(sg@nodelist, sg@layout)
   write.csv(temp, file = filenode, row.names = FALSE)
