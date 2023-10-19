@@ -110,6 +110,11 @@ makeEdges <- function(A, B, debug = FALSE) {
 MotifGraph <- function(motifNodes, alfa, name = "motif") {
   edgelist <- .makeEdgeListFromMotifs(motifNodes)
   nodelist <- .makeNodeListFromMotifs(motifNodes, alfa)
+  U <- unique(as.vector(as.matrix(edgelist[, 1:2])))
+  W <- which(!(nodelist[, "Names"] %in% U))
+  if (length(W) > 0) {
+    nodelist <- nodelist[-W,]
+  }
   layout <- .makeLayoutFromMotifs(nodelist[, "Names"], alfa, motifNodes)
   graph <- .createGraph(edgelist, nodelist)
   gname <- vertex_attr(graph, "name")
