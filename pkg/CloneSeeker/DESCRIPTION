@@ -1,9 +1,10 @@
 Package: CloneSeeker
-Version: 1.0.11
-Date: 2022-06-30
+Version: 1.0.12
+Date: 2025-04-08
 Title: Seeking and Finding Clones in Copy Number and Sequencing Data
-Author: Kevin R. Coombes, Mark Zucker
-Maintainer: Kevin R. Coombes <krc@silicovore.com>
+Authors@R: c(person(given = "Mark", family = "Zucker", role = "aut"),
+	    person(given = c("Kevin", "R."), family = "Coombes",
+                   role = c("aut", "cre"), email = "krc@silicovore.com"))
 Description: Defines the classes and functions used to simulate and
   to analyze data sets describing copy number variants and,
   optionally, sequencing mutations in order to detect clonal subsets.
