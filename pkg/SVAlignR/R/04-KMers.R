@@ -1,8 +1,14 @@
 
 
-makeWords <- function(opstrings, K) {
+makeWords <- function(opstrings, K, nb) {
   temp <- sapply(opstrings, function(use, K) {
     pop <- strsplit(use, "")[[1]]
+    if (nb > 1) {
+      pop <- lapply(pop, function(TX) {
+        tmat <- matrix(TX, ncol = nb, byrow = TRUE)
+        apply(tmat, 1, paste, collapse = "")
+      })
+    }
     L <- length(pop)
     if (L < K) return(NULL)
     if (L == K) {
@@ -14,15 +20,17 @@ makeWords <- function(opstrings, K) {
   }, K = K)
   table(unlist(temp)) # this is the slow step. look here if you need to speed it up
 }
+
 countWords <- function(opstrings, K, alpha = NULL) {
-  m <- makeWords(opstrings, K)
+  nb <- ifelse(is.null(alpha), 1, alpha@bytes)
+  m <- makeWords(opstrings, K, nb)
   if (!is.null(alpha)) {
     names(m) <- decode(alpha, names(m))
   }
   m
 }
 
-plotWords <- function(k, m) {
+plotWords <- function(k, m, mult) {
   V <- as.vector(m[[k]])
   N <- rownames(as.matrix(m[[k]]))
   oo <- order(V)

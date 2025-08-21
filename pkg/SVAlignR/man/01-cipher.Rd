@@ -39,6 +39,10 @@ decode(cipher, text)
   \describe{
       \item{\code{forward}:}{A named character vector.}
       \item{\code{reverse}:}{A named character vector.}
+      \item{\code{bytes}:}{The number of bytes used to encode each
+	'character' in the input test. Text with more than 72 unique
+	characters use a two-byte encoding, which is enough for
+	languages with up to 26*72 = 1872 characters.} 
   }
 }
 \value{

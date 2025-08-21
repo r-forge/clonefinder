@@ -14,11 +14,11 @@ deBruijn <- function(rawseq, M) {
   bethe <- Cipher(rawseq)
   rs <- encode(bethe, rawseq)
   ## Get a list of motifs (character strings) of length M
-  ## present in bhe data. Note that the `countWordss` function
+  ## present in the data. Note that the `countWordss` function
   ## wants to convert the element names back to the orginal alphabnet
   motifs <- countWords(rs, M, bethe)
   ## decompose each long-read breakpoint sequences (LRBPS) as a
- ## sequence of overlapping M-mers. Uses this function:
+  ## sequence of overlapping M-mers. Uses this function:
   dekomp <- function (opstrings, K)  {
     temp <- sapply(opstrings, function(use, K) {
       pop <- strsplit(use, "")[[1]]
@@ -37,7 +37,7 @@ deBruijn <- function(rawseq, M) {
   }
   ## Don't mess with really small sequences
   rs6 <- rs[nchar(rs) > M]
-  ## actually decompose everything that ios decomposable
+  ## actually decompose everything that is decomposable
   layers <- sapply(rs6, function(sqn) {
     dek <- decode(bethe, dekomp(sqn, M))
     sapply(dek, function(src) {

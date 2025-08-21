@@ -90,10 +90,10 @@ updateClusters <- function(sc, NC) {
 
 myColorSet <- c("cornflowerblue", "hotpink2", "green4", "red",
                 "darkorchid1", "gray16", "darkgoldenrod", "mediumorchid4",
-                "coral1", "blue", "lightseagreen", "maroon1",
-                "deeppink", "rosybrown", "darkolivegreen4", "skyblue4",
-                "tomato4", "mediumpurple2", "hotpink4", "blue3",
-                "orchid", "tan4", "midnightblue", "firebrick")
+                "coral1", "blue", "lightseagreen", "rosybrown",
+                "darkolivegreen4", "skyblue4", "tomato4", "mediumpurple2",
+                "hotpink4", "orchid", "tan4", "midnightblue",
+                "firebrick", "maroon1", "deeppink",  "blue3")
 
 setMethod("plot", signature("SequenceCluster", "missing"),
 function(x, type = "rooted", main = "Colored Clusters", ...) {
