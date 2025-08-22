@@ -168,7 +168,12 @@ AvAwAx AwAxAy AxAyAz AyAzA1 AzA1A2 A|A_A; BABBBC BBBCBD BCBDBE BDBEBF BEBFBG
 BFBGBH BGBHBI BHBIBK BIBKBL BKBLBM BLBMBN BMBNBO 
      2      2      2      2      2      2      2 
 > 
+> m <- lapply(1:8, function(J) countWords(coded, J, alfa))
+> plotWords(3, m)
+> 
+> M <- lapply(1:8, function(J) countWords(double, J, beta))
+> plotWords(2, M)
 > 
 > proc.time()
    user  system elapsed 
-   2.31    0.12    2.45 
+   2.04    0.10    2.15 

@@ -1,5 +1,5 @@
 Package: SVAlignR
-Version: 0.7.0
+Version: 0.7.3
 Date: 2025-08-22
 Title: Recovering Structure of Long Molecules from Structural Variation Data
 Authors@R: person(given = c("Kevin", "R."), family = "Coombes",

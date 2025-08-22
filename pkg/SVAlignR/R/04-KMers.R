@@ -38,9 +38,11 @@ countWords <- function(opstrings, K, alpha = NULL) {
   m
 }
 
-plotWords <- function(k, m, mult) {
-  V <- as.vector(m[[k]])
-  N <- rownames(as.matrix(m[[k]]))
+## 'm' is a list consisting of the ouput of countWords for different integers
+## 'k' is the word length
+plotWords <- function(K, m) {
+  V <- as.vector(m[[K]])
+  N <- rownames(as.matrix(m[[K]]))
   oo <- order(V)
   V <- V[oo]
   N <- N[oo]
@@ -52,7 +54,7 @@ plotWords <- function(k, m, mult) {
     L <- length(V)
   }
   plot(1:L, V, type = "n", ylim = c(-5, 5 + max(V)),
-       xlab = "Index", ylab = "Count", main = paste(k, "mers", sep = "-"))
+       xlab = "Index", ylab = "Count", main = paste(K, "mers", sep = "-"))
   text(1:L, V, N, srt = 90)
   invisible(V)
 }

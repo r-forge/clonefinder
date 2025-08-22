@@ -5,12 +5,15 @@ setClass("Breakpoints",
                    ypos = "numeric",
                    spread = "numeric",
                    id = "character"))
+## Decide if we wnat to keep enough stuff so we can create
+## circos plots of all translocations.
 
 Breakpoints <- function(working) {
   A <- data.frame(working[, 1:3], side = "left")
   B <- data.frame(working[, c(1, 5:6)], side = "right")
   colnames(A) <- colnames(B) <- c("id", "chrom", "base", "side")
   R <- rbind(A, B)
+## need to get Keiko to use chromosome names and not new segment names
   R <- R[order(R$chrom, R$base),]
   U <- unique(R$chrom)
   pick <- sapply(U, function(u) R$chrom == u) 
@@ -34,7 +37,7 @@ Breakpoints <- function(working) {
       id = R$id)
 }
 
-  setMethod("plot", c("Breakpoints", "missing"), function(x, y, ...) {
+setMethod("plot", c("Breakpoints", "missing"), function(x, y, ...) {
     N <- length(x@labels)
     plot(x@relLocation, x@ypos + x@spread,
          type = "n", ylim = c(0.5, N + 0.5), yaxt = "n",

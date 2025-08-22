@@ -8,5 +8,8 @@
   (such as individual consensus sequences) to the "unrooted" phylo plots.
 * Update the man page for `exportSG` to describe what it exports more
   completely.
-
+* Figure out how the breakpoint data should be structured so we can
+  find the chromomse names more simply.
+* Enhance the 'Breakpoints' class to produce circos plots of
+  translocations (with the virus).
 

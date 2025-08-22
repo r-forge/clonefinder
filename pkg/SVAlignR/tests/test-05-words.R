@@ -21,3 +21,8 @@ countWords(double, 3, beta) # this is right
 makeWords(double, 3)    # don't do this
 makeWords(double, 3, 2) # this is right
 
+m <- lapply(1:8, function(J) countWords(coded, J, alfa))
+plotWords(3, m)
+
+M <- lapply(1:8, function(J) countWords(double, J, beta))
+plotWords(2, M)
