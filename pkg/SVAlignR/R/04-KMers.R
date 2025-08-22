@@ -1,13 +1,20 @@
 
-
-makeWords <- function(opstrings, K, nb) {
+## opstrings is a character vector containing already encoded sequences
+## K is the length of the words to be listed
+## nb is the number of bytes used to encode each character
+makeWords <- function(opstrings, K, nb = 1) {
   temp <- sapply(opstrings, function(use, K) {
+    ## cat("Use:", class(use), " ", length(use), "\n", file = stderr())
+    ### use is always a single character string
     pop <- strsplit(use, "")[[1]]
+    ## cat("Pop:", class(pop), " ", length(use), "\n", file = stderr())
+    ## cat("Sent:", pop, "\n")
+    ### pop is also a single character string
     if (nb > 1) {
-      pop <- lapply(pop, function(TX) {
-        tmat <- matrix(TX, ncol = nb, byrow = TRUE)
-        apply(tmat, 1, paste, collapse = "")
-      })
+      tmat <- matrix(pop, ncol = nb, byrow = TRUE)
+      pop <- apply(tmat, 1, paste, collapse = "")
+      ## cat("After Pop:", class(pop), " ", length(use), "\n", file = stderr())
+      ## cat("Got: ", pop, "\n", file = stderr())
     }
     L <- length(pop)
     if (L < K) return(NULL)
@@ -21,6 +28,7 @@ makeWords <- function(opstrings, K, nb) {
   table(unlist(temp)) # this is the slow step. look here if you need to speed it up
 }
 
+## opstrings is a character vector containing already encoded sequences
 countWords <- function(opstrings, K, alpha = NULL) {
   nb <- ifelse(is.null(alpha), 1, alpha@bytes)
   m <- makeWords(opstrings, K, nb)
