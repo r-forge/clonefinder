@@ -37,14 +37,15 @@ Breakpoints <- function(working) {
       id = R$id)
 }
 
-setMethod("plot", c("Breakpoints", "missing"), function(x, y, ...) {
-    N <- length(x@labels)
-    plot(x@relLocation, x@ypos + x@spread,
-         type = "n", ylim = c(0.5, N + 0.5), yaxt = "n",
-         xlab = "Relative Base Posiiton", ylab = "Chromosome")
-    mtext(x@labels, side = 2, line = 1, at = 1:N, las = 3)
-    text(x@relLocation, x@ypos + x@spread, font = 2,
-         x@id, srt=90, col = c("red", "forestgreen", "black")[x@ypos])
-    abline(h = (1:N) +0.5, col = "gray")
-    invisible(x)
+setMethod("plot", c("Breakpoints", "missing"), function(x, y, colset, ...) {
+  N <- length(x@labels)
+  if(missing(colset)) colset <- dark.colors(N)
+  plot(x@relLocation, x@ypos + x@spread,
+       type = "n", ylim = c(0.5, N + 0.5), yaxt = "n",
+       xlab = "Relative Base Posiiton", ylab = "Chromosome")
+  mtext(x@labels, side = 2, line = 1, at = 1:N, las = 3)
+  text(x@relLocation, x@ypos + x@spread, font = 2,
+       x@id, srt=90, col = colset[x@ypos])
+  abline(h = (1:N) +0.5, col = "gray")
+  invisible(x)
 })

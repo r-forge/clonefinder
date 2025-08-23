@@ -20,7 +20,7 @@ importFrom("Biostrings", "AAStringSet")
 ### graphing
 importFrom("dendextend", "set", "%>%")
 importFrom("ape", "as.phylo")
-importFrom("Polychrome", "createPalette")
+importFrom("Polychrome", "createPalette", "dark.colors")
 importFrom("igraph", "graph_from_edgelist", "graph_from_adjacency_matrix",
            "set_vertex_attr", "vertex_attr", "set_edge_attr", "edge_attr")
 importFrom("stringr", "str_count")

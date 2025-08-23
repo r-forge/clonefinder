@@ -16,7 +16,7 @@
 }
 \usage{
 Breakpoints(working)
-\S4method{plot}{Breakpoints,missing}(x, y, \dots)
+\S4method{plot}{Breakpoints,missing}(x, y, colset, \dots)
 }
 \arguments{
   \item{working}{A data frame containing the locations of break
@@ -25,6 +25,7 @@ Breakpoints(working)
     stop) for each side of the break point.}
   \item{x}{An object of the \code{Breakpoints} class.}
   \item{y}{Anything; it is ignored.}
+  \item{colset}{A character vector of color specifications.}
   \item{\dots}{Extra graphical parameters.}
 }
 \section{Slots}{
@@ -36,7 +37,7 @@ Breakpoints(working)
 	of the chromosomes.}
       \item{\code{ypos}:}{A numeric vector indicating the chromosomes
 	involved in the full set of break points.}
-      \item{\code{spread}:}{How far apart the display of different
+      \item{\code{spread}:}{How far the display of different
 	chromosomes should be spread apart on the y-axis.}
       \item{\code{id}:}{The character vector of break point names.}
   }

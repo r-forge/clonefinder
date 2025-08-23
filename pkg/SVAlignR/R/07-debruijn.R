@@ -15,31 +15,16 @@ deBruijn <- function(rawseq, M) {
   rs <- encode(bethe, rawseq)
   ## Get a list of motifs (character strings) of length M
   ## present in the data. Note that the `countWordss` function
-  ## wants to convert the element names back to the orginal alphabnet
+  ## wants to convert the element names back to the original alphabnet
   motifs <- countWords(rs, M, bethe)
   ## decompose each long-read breakpoint sequences (LRBPS) as a
   ## sequence of overlapping M-mers. Uses this function:
-  dekomp <- function (opstrings, K)  {
-    temp <- sapply(opstrings, function(use, K) {
-      pop <- strsplit(use, "")[[1]]
-      L <- length(pop)
-      if (L < K)
-        return(NULL)
-      if (L == K) {
-        val <- 1
-        names(val) <- use
-        return(use)
-      }
-      sapply(0:(L - K), function(S) paste0(pop[S + (1:K)], 
-                                           collapse = ""))
-    }, K = K)
-    temp
-  }
+  nb <- bethe@bytes
   ## Don't mess with really small sequences
-  rs6 <- rs[nchar(rs) > M]
+  rs6 <- rs[nchar(rs) > M*nb]
   ## actually decompose everything that is decomposable
   layers <- sapply(rs6, function(sqn) {
-    dek <- decode(bethe, dekomp(sqn, M))
+    dek <- decode(bethe, dekomp(sqn, M, nb))
     sapply(dek, function(src) {
       which(names(motifs) == src)
     })

@@ -2,7 +2,7 @@
 ## opstrings is a character vector containing already encoded sequences
 ## K is the length of the words to be listed
 ## nb is the number of bytes used to encode each character
-makeWords <- function(opstrings, K, nb = 1) {
+dekomp <- function(opstrings, K, nb = 1) {
   temp <- sapply(opstrings, function(use, K) {
     ## cat("Use:", class(use), " ", length(use), "\n", file = stderr())
     ### use is always a single character string
@@ -25,6 +25,11 @@ makeWords <- function(opstrings, K, nb = 1) {
     }
     sapply(0:(L-K), function(S) paste0(pop[S + (1:K)], collapse=""))
   }, K = K)
+  temp
+}
+
+makeWords <- function(opstrings, K, nb = 1) {
+  temp <- dekomp(opstrings, K, nb)
   table(unlist(temp)) # this is the slow step. look here if you need to speed it up
 }
 
