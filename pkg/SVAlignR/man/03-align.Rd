@@ -73,6 +73,16 @@ class. The \code{alignAllClusters} function returns a list of
 \code{AlignedCluster} objects. The \code{makeSubMatrix} function returns
 a symmetric substitution matrix.
 }
+\note{
+  These functions will only work if the \code{ms} package is
+  installed. At the time of writing, CRAN does not install \code{msa}
+  because of the way that \code{msa} uses the \code{OpenMP}
+  protocol. So, \code{SVAlignR} only "Suggests" using the package and
+  does not include it in the list of "Imports". Thus, to obtain this
+  functionality, you must manually install \code{msa} from the
+  yourself using the \code{BiocManager::install} function from
+  BioConductor. 
+}
 \author{Kevin R. Coombes <krc@silicovore.com>}
 \examples{
 data(longreads)
@@ -81,7 +91,11 @@ pad <- c(rep("0", 9), rep("", 6))
 names(seqs) <- paste("LR", pad, 1:length(seqs), sep = "")
 seqs <- seqs[!duplicated(seqs)]
 mysub <- makeSubsMatrix(match = 2, mismatch = -6)
-ab <- alignCluster(seqs, mysub)
-image(ab)
+if (!requireNamespace("msa", quietly = TRUE)) {
+  warning("Cluster alignment is only available if the 'msa' package is installed.\n")
+} else {
+  ab <- alignCluster(seqs, mysub)
+  image(ab)
+}
 }
 \keyword{ cluster }

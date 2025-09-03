@@ -20,6 +20,10 @@ makeSubsMatrix <- function(match = 5, mismatch = -2) {
 ###    aligned = results of an alignment algorithm
 ###    alignedOriginal = results translated back to starting alphabet
 align <- function(sequences, mysub = NULL, gapO = 10, gapE = 0.2) {
+  if (!requireNamespace("msa", quietly = TRUE)) {
+    stop("The `align` function will only work if the 'msa' package is ",
+         "already installed.\n")
+  }
   if (is.null(mysub)) mysub <- makeSubsMatrix()
   U2 <- sort(unique(unlist(strsplit(sequences, ""))))
   if (length(U2) > 25) {
@@ -30,11 +34,11 @@ align <- function(sequences, mysub = NULL, gapO = 10, gapE = 0.2) {
   tempaa <- .xlate(sequences, protein@forward, "", "")
   babel <- AAStringSet(tempaa) # pretend we have proteins
   ## Align the sequences with a custom matrix
-  aligned <- msa(babel, method = "ClustalW",
+  aligned <- msa::msa(babel, method = "ClustalW",
                  substitutionMatrix = mysub, gapOpening = gapO, gapExtension = gapE)
   ## Translate back to the original alphabet
   reverse <- .xlate(as.character(aligned), protein@reverse, "", "")
-  xcons  <- .xlate(msaConsensusSequence(aligned), protein@reverse, "", "")
+  xcons  <- .xlate(msa::msaConsensusSequence(aligned), protein@reverse, "", "")
 
   list(babel = babel,
        aligned = aligned,

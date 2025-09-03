@@ -14,7 +14,7 @@ importFrom("utils", "adist", "write.csv")
 
 ### Computational models
 importFrom("NameNeedle", "needleScores", "defaultNeedleParams")
-importFrom("msa", "msa", "msaConsensusSequence", "msaClustalW")
+#importFrom("msa", "msa", "msaConsensusSequence", "msaClustalW")
 importFrom("Biostrings", "AAStringSet")
 
 ### graphing
