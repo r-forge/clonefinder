@@ -137,7 +137,7 @@ function(x, type = "rooted", main = "Colored Clusters", ...) {
                 rooted = plotRooted(x, NC, ...),
                 clipped = plotClipped(x, NC, ...),
                 unrooted = plotUnrooted(x, NC, ...),
-                print("Invalid type.")
+                warning("Invalid type.")
                 )
   invisible(x)
 })

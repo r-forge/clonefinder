@@ -13,7 +13,7 @@ setMethod("plot", "StringGraph", function(x,y, ...) {
 })
 
 
-exportSG <- function(sg, outdir = ".") {
+exportSG <- function(sg, outdir) {
   if (!inherits(sg, "StringGraph")) {
     stop("Wrong object type.\n")
   }
