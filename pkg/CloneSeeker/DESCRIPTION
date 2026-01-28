@@ -1,6 +1,6 @@
 Package: CloneSeeker
-Version: 1.0.13
-Date: 2025-04-08
+Version: 1.0.14
+Date: 2026-01-2
 Title: Seeking and Finding Clones in Copy Number and Sequencing Data
 Authors@R: c(person(given = "Mark", family = "Zucker", role = "aut"),
 	    person(given = c("Kevin", "R."), family = "Coombes",
