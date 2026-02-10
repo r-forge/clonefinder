@@ -3,11 +3,11 @@ if (packageVersion("CloneSeeker") < "0.9.0") {
 }
 library("CloneSeeker")
 
-fixSmry <- function(X, D = NULL) {
+fixSmry <- function(X, D = NULL, ...) {
   if (!is.null(D)) {
-    S <- summary(X, digits = D)
+    S <- summary(X, digits = D, ...)
   } else {
-    S <- summary(X)
+    S <- summary(X, ...)
   }
   W <- grep("NA's", S)
   if (any(W)) S[W] <- gsub("NA's", "NAs", S[W])
@@ -103,12 +103,19 @@ for (J in testset) {
     cat("eta:\n")
     print(data.frame(etaA = ra$etaA, etaB = ra$etaB))
     cat("indices:\n")
-    print(lapply(ra$indices, summary))
+    print(lapply(ra$indices, function(X) {
+      if (length(X) == 0) {
+        cat("Empty.\n")
+      } else {
+        summary(X)
+      }
+    }))
     cat("filtered data:\nMutations:\n")
-    print(summary(ra$filtered.data$mutdata.filt))
+    print(summary(ra$filtered.data$mutdata.filt, character.method = NULL))
     if (J != 5) {
       cat("CNVs:\n")
-      print(summary(as.matrix(ra$filtered.data$cndata.filt), digits = 2))
+      print(summary(as.matrix(ra$filtered.data$cndata.filt),
+                    digits = 2, character.method = NULL))
     }
     print(fixSmry(ra$mutated))
     cat("posteriors\n")

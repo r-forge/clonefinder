@@ -17,11 +17,11 @@ Type 'q()' to quit R.
 
 > library(CloneSeeker)
 > 
-> fixSmry <- function(X, D = NULL) {
+> fixSmry <- function(X, D = NULL, ...) {
 +   if (!is.null(D)) {
-+     S <- summary(X, digits = D)
++     S <- summary(X, digits = D, ...)
 +   } else {
-+     S <- summary(X)
++     S <- summary(X, ...)
 +   }
 +   W <- grep("NA's", S)
 +   if (any(W)) S[W] <- gsub("NA's", "NAs", S[W])
@@ -246,7 +246,7 @@ $seq.data
  Mean   :1.002   Mean   :1.004   Mean   :1695  
  3rd Qu.:1.007   3rd Qu.:1.007   3rd Qu.:1920  
  Max.   :1.594   Max.   :1.620   Max.   :2714  
-> fixSmry(dataset$seq.data[,-(6:7)]) # note that all mut.id are NA's since there were no mutations
+> fixSmry(dataset$seq.data[,-(6:7)], character.method = NULL)
       chr              seg            mut.id       refCounts     
  Min.   : 1.000   Min.   :  1.0   Min.   : NA    Min.   : 10.00  
  1st Qu.: 4.000   1st Qu.: 88.0   1st Qu.: NA    1st Qu.: 60.00  
@@ -263,10 +263,11 @@ $seq.data
  3rd Qu.: 80.00                     
  Max.   :170.00                     
                                     
+> ## note that all mut.id are NA's since there were no mutations
 > 
 > plotTumorData(object, dataset)
 > 
 > 
 > proc.time()
    user  system elapsed 
-  12.28    0.46   12.67 
+  12.18    0.35   12.46 

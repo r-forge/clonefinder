@@ -1,10 +1,10 @@
 library(CloneSeeker)
 
-fixSmry <- function(X, D = NULL) {
+fixSmry <- function(X, D = NULL, ...) {
   if (!is.null(D)) {
-    S <- summary(X, digits = D)
+    S <- summary(X, digits = D, ...)
   } else {
-    S <- summary(X)
+    S <- summary(X, ...)
   }
   W <- grep("NA's", S)
   if (any(W)) S[W] <- gsub("NA's", "NAs", S[W])
@@ -74,7 +74,8 @@ names(dataset)
 lapply(dataset, class)
 lapply(dataset, dim)
 summary(as.matrix(dataset$cn.data), digits = 3)
-fixSmry(dataset$seq.data[,-(6:7)]) # note that all mut.id are NA's since there were no mutations
+fixSmry(dataset$seq.data[,-(6:7)], character.method = NULL)
+## note that all mut.id are NA's since there were no mutations
 
 plotTumorData(object, dataset)
 
