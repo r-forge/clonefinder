@@ -23,7 +23,7 @@ importFrom("ape", "as.phylo")
 importFrom("Polychrome", "createPalette", "dark.colors")
 importFrom("igraph", "graph_from_edgelist", "graph_from_adjacency_matrix",
            "set_vertex_attr", "vertex_attr", "set_edge_attr", "edge_attr")
-importFrom("stringr", "str_count")
+importFrom("stringr", "str_count", "str_locate")
 importFrom("colorspace", "hex2RGB")
 
 ### Exports
@@ -53,3 +53,7 @@ export("Breakpoints")
 ### De Bruijn Graphs
 exportClass("DeBruijn")
 export("deBruijn")
+
+## Evidence for putative cycles
+export("Vexpand", "bothWays", "getSupport", "getCoverage",
+       "showCoverage")
