@@ -95,7 +95,7 @@ alignAllClusters <- function(sc, mysub = NULL, gapO = 10, gapE = 0.2) {
 }
 
 
-setMethod("image", "AlignedCluster",  function(x, col = "black", cex = 1, main = "", ...) {
+setMethod("image", "AlignedCluster",  function(x, counts = TRUE, col = "black", cex = 1, main = "", ...) {
   meet <- x@alignment
   wt <- x@weights
   cons <- unlist(strsplit(x@consensus, "-"))
@@ -120,7 +120,7 @@ setMethod("image", "AlignedCluster",  function(x, col = "black", cex = 1, main =
                    ifelse(ncol(meet) > 22, 0.5, 0.7), 1)
   mtext(colnames(meet), side = 2, las = 2, at = 1:ncol(meet), line = 0.5,
         col = col, cex = txtcex)
-  if (length(wt) == ncol(meet)) {
+  if (counts & length(wt) == ncol(meet)) {
     mtext(paste("n=", wt, sep = ""), side = 4, line = 1/2, at = 1:length(wt), las=2)
   }
   invisible(x)

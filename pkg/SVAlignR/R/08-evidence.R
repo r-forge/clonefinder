@@ -1,4 +1,6 @@
-Vexpand <- function(cycles, seqs) {
+Vexpand <- function(cycles, seqs, alfa) {
+  fineRepeatedCharacters <- function(seqs, alfa) { # needs a two-byte updgrade
+  }
   countVs <- function(cycs) {
     ss <- strsplit(cycs, 'v')
     sapply(ss, length) - 1
@@ -6,28 +8,33 @@ Vexpand <- function(cycles, seqs) {
   if( any(countVs(cycles) > 1) ) {
     stop("Input cycle is not a simple path!")
   }
-  repVs <- function(seqs) {
+  repVs <- function(seqs, V) {
     K <- 0
     count <- 1
     while(count > 0) {
       K <- K + 1
-      vrep <- paste(rep("v", K), collapse = "-")
+      vrep <- paste(rep(V, K), collapse = "-")
       count <- sum(grepl(vrep, seqs))
     }
     K - 1
   }
-  N <- repVs(seqs)
-  if (N > 1) {
-    hasV <- seqs[grep("v", cycles)]
-    sap <- sapply(2:N, function(J, cycs) {
-      vrep <- paste(rep("v", J), collapse = "-")
-      sub("v", vrep, cycs)
-    }, cycs = cycles)
-    longcM1 <- c(cycles, as.vector(sap))
-  } else {
-    longcM1 <- cycles
+  # find repeated breakpoints
+  enc <- encode(alfa, seqs)
+  matches <- gregexpr("(.)\\1", enc)
+  repeated_chars <- unique(unlist(regmatches(enc, matches)))
+  stutter <- decode(alfa, substring(repeated_chars, 1, 1))
+  for (V in stutter) {
+    N <- repVs(seqs, V)
+    if (N > 1) {
+      hasV <- seqs[grep(V, cycles)]
+      sap <- sapply(2:N, function(J, cycs) {
+        vrep <- paste(rep(V, J), collapse = "-")
+        sub(V, vrep, cycs)
+      }, cycs = cycles)
+      cycles <- c(cycles, as.vector(sap))
+    }
   }
-  longcM1 <- longcM1[!duplicated(longcM1)]
+  longcM1 <- cycles[!duplicated(cycles)]
   longcM1
 }
 
