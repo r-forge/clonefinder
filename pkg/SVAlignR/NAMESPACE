@@ -5,7 +5,7 @@
 import("methods")
 importMethodsFrom("oompaBase", "plot", "image")
 
-importFrom("graphics", "image", "mtext", "text", "abline")
+importFrom("graphics", "image", "mtext", "text", "abline", "lines")
 importFrom("grDevices", "topo.colors")
 importFrom("stats", "aggregate",
            "hclust", "as.dendrogram",

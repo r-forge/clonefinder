@@ -1,6 +1,4 @@
 Vexpand <- function(cycles, seqs, alfa) {
-  fineRepeatedCharacters <- function(seqs, alfa) { # needs a two-byte updgrade
-  }
   countVs <- function(cycs) {
     ss <- strsplit(cycs, 'v')
     sapply(ss, length) - 1
@@ -43,7 +41,6 @@ bothWays <- function(xc, seqs) {
     X <- strsplit(cycle, "-")[[1]]
     paste(rev(X), collapse = "-")
   }
-  
   doubles <- paste0(xc, "-", xc)
   support <- sapply(seqs, grep, x = doubles)
   RE <- sapply(seqs, revert)
@@ -97,6 +94,7 @@ getCoverage <- function(xc, rawSP, seqs, doubles, alfa) {
   })
   cvg
 }
+
 showCoverage <- function(ID, colsams) {
   CC <- coverage[[ID]]
   SQ <- xcM1[ID]

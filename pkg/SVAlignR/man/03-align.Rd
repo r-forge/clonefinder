@@ -26,7 +26,7 @@ implementation of ClustalW in the \code{msa} package.
 alignCluster(sequences, mysub = NULL, gapO = 10, gapE = 0.2)
 alignAllClusters(sc, mysub = NULL, gapO = 10, gapE = 0.2)
 makeSubsMatrix(match = 5, mismatch = -2)
-\S4method{image}{AlignedCluster}(x, col = "black", cex = 1, main = "", ...)
+\S4method{image}{AlignedCluster}(x, counts = TRUE, col = "black", cex = 1, main = "", ...)
 }
 \arguments{
   \item{sequences}{A character vector that contains all sequences
@@ -41,8 +41,10 @@ makeSubsMatrix(match = 5, mismatch = -2)
     symbols from two sequences.}
   \item{x}{An object of the \code{AlignedCluster} class.}
   \item{col}{A character setting the color of annotations in the image.}
+  \item{counts}{A logical value; whether to display the repeat counts of
+    sequences on the right side of the image.}
   \item{main}{Character; the plot title.}
-  \item{cex}{Numeric; size of teh text inside the image of the alignment
+  \item{cex}{Numeric; size of the text inside the image of the alignment
     matrix.}
   \item{\dots}{Extra arguments for generic or plotting routines.}
 }
