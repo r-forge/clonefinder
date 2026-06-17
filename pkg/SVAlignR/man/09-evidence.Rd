@@ -1,9 +1,10 @@
 \name{Circular DNA Evidence}
 \alias{Vexpand}
-\alias(bothWays)
-\alias(getSupport)
-\alias(getCoverage)
-\alias(showCoverage)
+\alias{bothWays}
+\alias{getSupport}
+\alias{getCoverage}
+\alias{showCoverage}
+\alias{getEvidence}
 
 \title{Support and Evidence for Circular DNA}
 \description{
@@ -17,6 +18,7 @@ bothWays(xc, seqs)
 getSupport(comb, clues)
 getCoverage(xc, rawSP, seqs, doubles, alfa)
 showCoverage(ID, colsams)
+getEvidence(cycM1, noxsqn, alfa, totalOnly = TRUE)
 }
 \arguments{
   \item{cycles}{}
@@ -49,5 +51,5 @@ showCoverage(ID, colsams)
 
 }
 \examples{
-
+}
 \keyword{color}

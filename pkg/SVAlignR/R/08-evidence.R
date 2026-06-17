@@ -95,9 +95,9 @@ getCoverage <- function(xc, rawSP, seqs, doubles, alfa) {
   cvg
 }
 
-showCoverage <- function(ID, colsams) {
-  CC <- coverage[[ID]]
-  SQ <- xcM1[ID]
+showCoverage <- function(ID, evidence, colsams) {
+  CC <- evidence$coverage[[ID]]
+  SQ <- evidence$vspan[ID]
   N <- length(sq <- strsplit(SQ, "-")[[1]])
   lrnames <- strsplit(CC$RDS, ";")[[1]]
   lrnames <- lrnames[order(whereSeen[lrnames])]
@@ -128,4 +128,21 @@ showCoverage <- function(ID, colsams) {
     }
     lines(c(strt-0.5, strt-0.5), c(J-0.4, J+0.4), col = "black", lwd=4)
   }
+}
+
+getEvidence <- function(cycM1, noxsqn, alfa, totalOnly = TRUE) {
+  xcM1 <- Vexpand(cycM1, noxsqn, alfa)
+  BW <- bothWays(xcM1, noxsqn)
+  SP <- getSupport(BW$comb, seqclust)
+  coverage <- getCoverage(xcM1, SP, noxsqn, BW$doubles, alfa)
+  wmin <- sapply(coverage, function(X) min(X$WCOV))
+  drat <- data.frame(N = unlist(lapply(coverage, function(X) X["N"])),
+                     RDS = unlist(lapply(coverage, function(X) X["RDS"])),
+                     TOT = unlist(lapply(coverage, function(X) X["TOT"])),
+                     WTOT = wmin,
+                     cycle = xcM1)
+  if (totalOnly) {
+    drat <- drat[drat$TOT > 0,]
+  }
+  list(coverage = coverage, circles = drat, vspan = xcM1)
 }
