@@ -95,12 +95,14 @@ getCoverage <- function(xc, rawSP, seqs, doubles, alfa) {
   cvg
 }
 
-showCoverage <- function(ID, evidence, colsams) {
+showCoverage <- function(ID, evidence, alfa, colsams, locsams = NULL) {
   CC <- evidence$coverage[[ID]]
   SQ <- evidence$vspan[ID]
   N <- length(sq <- strsplit(SQ, "-")[[1]])
   lrnames <- strsplit(CC$RDS, ";")[[1]]
-  lrnames <- lrnames[order(whereSeen[lrnames])]
+  if (!is.null(locsams)) {
+    lrnames <- lrnames[order(locsams[lrnames])]
+  }
   L <- length(lrnames)
   if (missing(colsams)) {
     colsams <- rep("grey", L)
