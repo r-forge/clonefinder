@@ -10,21 +10,23 @@
 }
 \usage{
 getEvidence(cycles,  seqs, alfa, totalOnly = TRUE)
-showCoverage(ID, evidence, colsams)
+showCoverage(ID, evidence, alfa, colsams, locsams = NULL)
 }
 \arguments{
   \item{cycles}{A character vector containg the breakpoint strings of
     the potential circles to be evaluated.}
   \item{seqs}{A chaarcter vector continaing the breakpoint sequences of
-    th long read seqeunces to be used for support of circles.}
+    the long read seqeunces to be used for support of circles.}
   \item{alfa}{An object of the \code{\link{Cipher}} class.}
   \item{totalOnly}{A logical value; only return cycles that are totally
     supported?}
   \item{ID}{An integer index into the "coverage" list indicating which
     cycle to display.}
   \item{evidence}{A list as output by the \code{getEvidence} function.}
-  \item{colsams}{A vector indicating which colors to use for supporting
-    long reads. If missing, all long reads are colored grey.}
+  \item{colsams}{A character vector indicating which colors to use for
+    supporting long reads. If missing, all long reads are colored grey.}
+  \item{locsams}{A character vector indicating which samples contained
+    the long reads.}
 }
 \details{
 TDA
