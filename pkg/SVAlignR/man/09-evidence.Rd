@@ -1,55 +1,63 @@
 \name{Circular DNA Evidence}
-\alias{Vexpand}
-\alias{bothWays}
-\alias{getSupport}
-\alias{getCoverage}
-\alias{showCoverage}
 \alias{getEvidence}
+\alias{showCoverage}
 
 \title{Support and Evidence for Circular DNA}
 \description{
-  Tools to assess the evidnce supporting the idea that a long-read
+  Tools to assess the evidence supporting the idea that a long-read
   breakpoint sequence actually represents a piece of extrachromosomal
   circular DNA.
 }
 \usage{
-Vexpand(cycles, seqs, alfa)
-bothWays(xc, seqs)
-getSupport(comb, clues)
-getCoverage(xc, rawSP, seqs, doubles, alfa)
-showCoverage(ID, colsams)
-getEvidence(cycM1, noxsqn, alfa, totalOnly = TRUE)
+getEvidence(cycles,  seqs, alfa, totalOnly = TRUE)
+showCoverage(ID, evidence, colsams)
 }
 \arguments{
-  \item{cycles}{}
-  \item{seqs}{}
+  \item{cycles}{A character vector containg the breakpoint strings of
+    the potential circles to be evaluated.}
+  \item{seqs}{A chaarcter vector continaing the breakpoint sequences of
+    th long read seqeunces to be used for support of circles.}
   \item{alfa}{An object of the \code{\link{Cipher}} class.}
-  \item{xc}{}
-  \item{comb}{}
-  \item{clues}{}
-  \item{rawSP}{}
-  \item{doubles}{}
-  \item{ID}{}
-  \item{colsams}{}
+  \item{totalOnly}{A logical value; only return cycles that are totally
+    supported?}
+  \item{ID}{An integer index into the "coverage" list indicating which
+    cycle to display.}
+  \item{evidence}{A list as output by the \code{getEvidence} function.}
+  \item{colsams}{A vector indicating which colors to use for supporting
+    long reads. If missing, all long reads are colored grey.}
 }
 \details{
-
+TDA
 }
 \value{
+  The \code{getEvidence} function returns a list with three entries:
   \itemize{
-    \item \code{Vexpand} returns .
-    \item \code{bothWays} returns a list with two elements, \code{comb}
-      and \code{doubles}.
-    \item \code{getSupport} returns a data frame.
-    \item \code{getCoverage} returns a list.
+    \item{\code{coverage} is itself a list with one entry for each
+    cycle. These entries contain \code{N} (an integer number of
+    supporting reads), \code{RDS} (a character string with long-read
+    identifiers seaparated by semicolons), \code{TOT} (an integer, the
+    minimum support level for the nodes/brealpoints in the cycle),
+    \code{WTOT} (an integer, the minimum weighted count of support
+    across nodes), \code{COV} (an intege vector showing the number of
+    reads supporting each individual node, and \code{WCOV} the weighted
+    version of \code{COV}).}
+    \item{\code{circles} is a data frame with one row for each cycles and
+    columns \code{N}, \code{RDS}, \code{TOT}, \code{WTOT}, and
+    \code{cycle}. If \code{totalOnly} was \code{TRUE}, only totally
+    supported cycles (those with \code{TOT>0}) are returned.}
+    \item{\code{vspan} a character vector containng the strings
+    describing an expanded set of potential cycles.}
   }
 }
 \author{Kevin R. Coombes <krc@silicovore.com>}
 \references{
+  TDA
 }
 \seealso{
-
+  TDA
 }
 \examples{
+getEvidence
 }
-\keyword{color}
+\keyword{hplot}
+\keyword{models}

@@ -55,5 +55,4 @@ exportClass("DeBruijn")
 export("deBruijn")
 
 ## Evidence for putative cycles
-export("Vexpand", "bothWays", "getSupport", "getCoverage",
-       "showCoverage", "getEvidence")
+export("getEvidence")

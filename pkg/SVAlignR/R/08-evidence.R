@@ -130,11 +130,11 @@ showCoverage <- function(ID, evidence, colsams) {
   }
 }
 
-getEvidence <- function(cycM1, noxsqn, alfa, totalOnly = TRUE) {
-  xcM1 <- Vexpand(cycM1, noxsqn, alfa)
-  BW <- bothWays(xcM1, noxsqn)
+getEvidence <- function(cycles, seqs, alfa, totalOnly = TRUE) {
+  xcM1 <- Vexpand(cycles, seqs, alfa)
+  BW <- bothWays(xcM1, seqs)
   SP <- getSupport(BW$comb, seqclust)
-  coverage <- getCoverage(xcM1, SP, noxsqn, BW$doubles, alfa)
+  coverage <- getCoverage(xcM1, SP, seqs, BW$doubles, alfa)
   wmin <- sapply(coverage, function(X) min(X$WCOV))
   drat <- data.frame(N = unlist(lapply(coverage, function(X) X["N"])),
                      RDS = unlist(lapply(coverage, function(X) X["RDS"])),
